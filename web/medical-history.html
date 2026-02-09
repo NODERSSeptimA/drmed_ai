@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedAI — История болезни</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="page">
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon"><i data-lucide="heart-pulse"></i></div>
+        <span class="nav-logo-text">MedAI</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Панель</a>
+        <a href="#">Пациенты</a>
+        <a href="#">Приёмы</a>
+        <a href="#" class="active">AI Ассистент</a>
+        <a href="#">Сообщения</a>
+      </div>
+    </div>
+    <div class="nav-right">
+      <div class="search-box"><i data-lucide="search"></i><span>Поиск...</span></div>
+      <div class="avatar">DR</div>
+    </div>
+  </nav>
+
+  <!-- Document Header -->
+  <div class="mh-header">
+    <div class="mh-header-left">
+      <h1 class="font-display"><i data-lucide="file-text"></i> История болезни №4281</h1>
+      <div class="mh-meta">
+        <span><i data-lucide="stethoscope"></i> Психиатрия</span>
+        <span><i data-lucide="calendar"></i> Поступила 15.01.2026</span>
+        <span><i data-lucide="map-pin"></i> Лечащий врач. Др. Иванова С.А.</span>
+      </div>
+    </div>
+    <div class="mh-header-right">
+      <button class="btn btn-outline"><i data-lucide="pencil"></i> Редактировать</button>
+      <button class="btn btn-outline" onclick="window.print()"><i data-lucide="printer"></i> Печать</button>
+    </div>
+  </div>
+
+  <!-- Body: Sidebar + Content -->
+  <div class="mh-body">
+    <!-- Sidebar Navigation -->
+    <aside class="mh-sidebar">
+      <div class="mh-sidebar-label">РАЗДЕЛЫ</div>
+      <div style="height:12px"></div>
+      <div class="mh-sidebar-item active" data-section="sec-passport"><i data-lucide="user"></i> Паспортная часть</div>
+      <div class="mh-sidebar-item" data-section="sec-complaints"><i data-lucide="message-circle"></i> Жалобы при поступлении</div>
+      <div class="mh-sidebar-item" data-section="sec-life"><i data-lucide="book-open"></i> Анамнез жизни</div>
+      <div class="mh-sidebar-item" data-section="sec-disease"><i data-lucide="history"></i> Анамнез заболевания</div>
+      <div class="mh-sidebar-item" data-section="sec-mental"><i data-lucide="brain"></i> Психический статус</div>
+      <div class="mh-sidebar-item" data-section="sec-physical"><i data-lucide="activity"></i> Соматический статус</div>
+      <div class="mh-sidebar-item" data-section="sec-neuro"><i data-lucide="scan"></i> Неврологический статус</div>
+      <div class="mh-sidebar-item" data-section="sec-tests"><i data-lucide="test-tubes"></i> Данные обследований</div>
+      <div class="mh-sidebar-item" data-section="sec-diary"><i data-lucide="notebook-pen"></i> Дневник наблюдений</div>
+      <div class="mh-sidebar-item" data-section="sec-treatment"><i data-lucide="pill"></i> Лечение</div>
+      <div class="mh-sidebar-item" data-section="sec-epicrisis"><i data-lucide="file-check"></i> Эпикриз</div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="mh-content">
+
+      <!-- AI Fill Bar -->
+      <div class="mh-ai-bar">
+          <div class="ai-icon-lg"><i data-lucide="sparkles"></i></div>
+          <div class="mh-ai-text">
+            <span class="title">AI Заполнение истории болезни</span>
+            <span class="desc">Загрузите выписки, результаты обследований или надиктуйте осмотр — AI заполнит все разделы</span>
+          </div>
+          <div class="mh-ai-actions">
+            <button class="mh-ai-btn voice"><i data-lucide="mic"></i> Голос</button>
+            <button class="mh-ai-btn files"><i data-lucide="upload"></i> Файлы</button>
+            <button class="mh-ai-btn photo"><i data-lucide="camera"></i> Фото</button>
+          </div>
+        </div>
+
+        <!-- ===== 1. Паспортная часть ===== -->
+        <div class="sec-title" id="sec-passport">
+          <div class="sec-title-icon"><i data-lucide="user"></i></div>
+          <span class="font-display">1. Паспортная часть</span>
+        </div>
+
+        <!-- Patient Info Card -->
+        <div class="card">
+          <div class="card-header-row">
+            <div class="card-patient">
+              <div class="card-avatar">АК</div>
+              <div class="card-patient-info">
+                <span class="card-patient-name">Ковальски Анна Михайловна</span>
+                <span class="card-patient-sub">34 года · Женский · Карта №4281</span>
+              </div>
+            </div>
+            <div class="card-status-badge green"><span class="dot"></span> Стационар</div>
+          </div>
+          <div class="card-body">
+            <div class="card-fields">
+              <div class="card-field"><span class="card-field-label">Адрес</span><span class="card-field-value">г. Москва, ул. Тверская, 15</span></div>
+              <div class="card-field"><span class="card-field-label">Работа</span><span class="card-field-value">ООО «Медиатех»</span></div>
+              <div class="card-field"><span class="card-field-label">Образование</span><span class="card-field-value">Высшее</span></div>
+              <div class="card-field"><span class="card-field-label">Сем. положение</span><span class="card-field-value">Не замужем</span></div>
+              <div class="card-field"><span class="card-field-label">Телефон</span><span class="card-field-value">+7 (903) 456-78-90</span></div>
+              <div class="card-field"><span class="card-field-label">Email</span><span class="card-field-value">anna.kowalski@mail.ru</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hospitalization Card -->
+        <div class="card">
+          <div class="card-section-header">Данные госпитализации</div>
+          <div class="card-body">
+            <div class="card-fields four">
+              <div class="card-field"><span class="card-field-label">Дата поступления</span><span class="card-field-value">15.01.2026, 14:30</span></div>
+              <div class="card-field"><span class="card-field-label">Направлен</span><span class="card-field-value">ПНД №13</span></div>
+              <div class="card-field"><span class="card-field-label">Тип госпитализации</span><span class="card-field-value">Добровольная</span></div>
+              <div class="card-field"><span class="card-field-label">Отделение</span><span class="card-field-value">Психиатрическое №3</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diagnosis Card -->
+        <div class="card">
+          <div class="card-section-header">Диагнозы</div>
+          <div class="card-body" style="gap: 20px;">
+            <div class="diag-block yellow">
+              <div class="diag-label"><span class="diag-dot yellow"></span> Предварительный диагноз</div>
+              <p>Рекуррентное депрессивное расстройство, текущий эпизод тяжёлой степени без психотических симптомов</p>
+              <span class="diag-code yellow">МКБ-10: F33.2</span>
+            </div>
+            <div class="diag-block green">
+              <div class="diag-label"><span class="diag-dot green"></span> Клинический диагноз</div>
+              <p>Рекуррентное депрессивное расстройство, текущий эпизод тяжёлой степени с соматическими симптомами. Тревожный синдром. Инсомния.</p>
+              <span class="diag-code green">МКБ-10: F33.21</span>
+            </div>
+            <div class="diag-block purple">
+              <div class="diag-label"><span class="diag-dot purple"></span> Сопутствующий диагноз</div>
+              <p>Генерализованное тревожное расстройство</p>
+              <span class="diag-code purple">МКБ-10: F41.1</span>
+            </div>
+          </div>
+      </div>
+
+      <!-- ===== 2. Жалобы при поступлении ===== -->
+      <div class="sec-title" id="sec-complaints">
+        <div class="sec-title-icon"><i data-lucide="message-circle"></i></div>
+        <span class="font-display">2. Жалобы при поступлении</span>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <p class="card-text-intro">На момент поступления пациентка предъявляет жалобы на:</p>
+          <div class="card-bullet-list">
+            <div class="card-bullet-item"><span class="bullet">•</span> стойко сниженное настроение в течение последних 3 месяцев с усилением в утренние часы</div>
+            <div class="card-bullet-item"><span class="bullet">•</span> утрату интересов и способности получать удовольствие (ангедония)</div>
+            <div class="card-bullet-item"><span class="bullet">•</span> нарушение сна (ранние пробуждения в 4–5 утра, трудности засыпания)</div>
+            <div class="card-bullet-item"><span class="bullet">•</span> снижение аппетита, потеря массы тела (−5 кг за 2 месяца)</div>
+            <div class="card-bullet-item"><span class="bullet">•</span> выраженную тревогу, внутреннее беспокойство, невозможность расслабиться</div>
+            <div class="card-bullet-item"><span class="bullet">•</span> трудности концентрации внимания, снижение работоспособности</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 3. Анамнез жизни ===== -->
+      <div class="sec-title" id="sec-life">
+        <div class="sec-title-icon"><i data-lucide="book-open"></i></div>
+        <span class="font-display">3. Анамнез жизни</span>
+      </div>
+      <div class="card">
+        <div class="card-subsection">
+          <div class="card-subsection-label">Наследственность</div>
+          <div class="card-subsection-text">Мать — эпизоды депрессии, наблюдалась амбулаторно. Бабушка по материнской линии — суицидальная попытка в анамнезе. Отец — злоупотребление алкоголем. Брат — без психической патологии.</div>
+        </div>
+        <div class="card-subsection">
+          <div class="card-subsection-label">Раннее развитие</div>
+          <div class="card-subsection-text">Родилась в срок, без патологии беременности и родов. Раннее психомоторное развитие без особенностей. В детском саду адаптировалась с трудом, была застенчивой. В школу пошла в 7 лет, училась хорошо.</div>
+        </div>
+        <div class="card-subsection">
+          <div class="card-subsection-label">Образование и трудовая деятельность</div>
+          <div class="card-subsection-text">Окончила МГТУ им. Баумана, факультет дизайна. Работает дизайнером в IT-компании с 2015 г. Последний год отмечает значительное снижение работоспособности, с ноября 2025 г. на больничном листе.</div>
+        </div>
+        <div class="card-subsection">
+          <div class="card-subsection-label">Перенесённые заболевания</div>
+          <div class="card-subsection-text">Детские инфекции — ветряная оспа, краснуха. Хронический гастрит. Операций не было. ЧМТ отрицает. Аллергоанамнез: пенициллин (крапивница).</div>
+        </div>
+        <div class="card-subsection">
+          <div class="card-subsection-label">Вредные привычки</div>
+          <div class="card-subsection-text">Курение отрицает. Алкоголь — эпизодически, в небольших количествах. Употребление ПАВ отрицает.</div>
+        </div>
+      </div>
+
+      <!-- ===== 4. Анамнез заболевания ===== -->
+      <div class="sec-title" id="sec-disease">
+        <div class="sec-title-icon"><i data-lucide="history"></i></div>
+        <span class="font-display">4. Анамнез заболевания</span>
+      </div>
+      <div class="card">
+        <div class="card-body card-prose">
+          <p>Первый депрессивный эпизод в возрасте 26 лет (2017 г.) после разрыва длительных отношений. Отмечала сниженное настроение, плаксивость, нарушение сна в течение 4 месяцев. К психиатру не обращалась, принимала седативные препараты самостоятельно. Состояние улучшилось спонтанно.</p>
+          <p>Второй эпизод — весна 2022 г. на фоне профессионального выгорания. Обратилась в ПНД, назначен сертралин 50 мг/сут. Принимала 6 месяцев, отмечала улучшение, самостоятельно прекратила приём.</p>
+          <p>Текущий (третий) эпизод развивается с октября 2025 г. постепенно, на фоне конфликтной ситуации на работе и смерти бабушки. Состояние прогрессивно ухудшалось: нарастала тревога, появились панические атаки (до 2–3 раз в неделю), стойкая бессонница. Амбулаторное лечение (эсциталопрам 10 мг, феназепам 0.5 мг на ночь) — без значимого эффекта в течение 2 месяцев. Направлена на стационарное лечение.</p>
+        </div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-card">
+          <div class="tl-date">2017</div>
+          <div class="tl-desc">1-й эпизод. Реактивная депрессия. Без лечения.</div>
+        </div>
+        <div class="timeline-card">
+          <div class="tl-date">2022</div>
+          <div class="tl-desc">2-й эпизод. Сертралин 50 мг. Ремиссия 2.5 года.</div>
+        </div>
+        <div class="timeline-card highlight">
+          <div class="tl-date">2025–н.в.</div>
+          <div class="tl-desc">3-й эпизод. Тяжёлый. Госпитализация.</div>
+        </div>
+      </div>
+
+      <!-- ===== 5. Психический статус ===== -->
+      <div class="sec-title" id="sec-mental">
+        <div class="sec-title-icon"><i data-lucide="brain"></i></div>
+        <span class="font-display">5. Психический статус (Status praesens psychicus)</span>
+      </div>
+      <div class="card">
+        <div class="card-subsection">
+          <div class="card-subsection-label">Внешний вид и поведение</div>
+          <div class="card-subsection-text">Выглядит старше паспортного возраста. Одета аккуратно, но без внимания к внешности. Мимика обеднена, лицо гипомимичное, выражение скорбное. Поза согбенная, движения замедлены. В контакт вступает пассивно, отвечает тихим голосом, с задержками.</div>
+        </div>
+        <div class="card-subsection">
+          <div class="card-subsection-label">Сознание и ориентировка</div>
+          <div class="card-subsection-text">Сознание ясное. Ориентирована в месте, времени и собственной личности правильно.</div>
+        </div>
+        <div class="card-subsection">
+          <div class="card-subsection-label">Восприятие</div>
+          <div class="card-subsection-text">Расстройств восприятия в форме иллюзий, галлюцинаций (слуховых, зрительных, тактильных) не выявлено. Сенестопатии, деперсонализация, дереализация — отрицает.</div>
+        </div>
+        <div class="card-subsection">
+          <div class="card-subsection-label">Мышление</div>
+          <div class="card-subsection-text">Темп мышления замедлен. Ассоциативный процесс обеднён. Бредовых идей не высказывает. Отмечаются идеи малоценности, самообвинения («я всех подвожу», «я стала обузой»). Навязчивые мысли о бессмысленности жизни — без конкретных суицидальных планов. Суицидальные мысли пассивного характера.</div>
+        </div>
+        <div class="card-subsection">
+          <div class="card-subsection-label">Эмоциональная сфера</div>
+          <div class="card-subsection-text">Фон настроения резко снижен. Преобладают чувства тоски, безнадёжности, вины. Эмоциональные реакции обеднены, при упоминании семьи — плачет. Отмечает утрату способности радоваться. Тревога выраженная, усиливается к вечеру.</div>
+        </div>
+        <div class="card-subsection">
+          <div class="card-subsection-label">Волевая сфера</div>
+          <div class="card-subsection-text">Волевая активность снижена. Гипобулия. Затрудняется в принятии решений, с трудом выполняет повседневные дела. Потребности в деятельности снижены.</div>
+        </div>
+        <div class="card-subsection">
+          <div class="card-subsection-label">Внимание и память</div>
+          <div class="card-subsection-text">Внимание рассеянное, с трудом сосредотачивается. Жалуется на ухудшение памяти — преимущественно на текущие события (псевдодементная симптоматика на фоне депрессии). Долговременная память сохранена.</div>
+        </div>
+        <div class="card-subsection">
+          <div class="card-subsection-label">Интеллект</div>
+          <div class="card-subsection-text">Соответствует полученному образованию и социальному опыту. Запас знаний достаточный. Мышление абстрактное, способность к обобщению сохранена.</div>
+        </div>
+        <div class="card-subsection">
+          <div class="card-subsection-label">Критика к состоянию</div>
+          <div class="card-subsection-text">Критика к заболеванию формальная. Понимает необходимость лечения, но выражает сомнение в возможности улучшения. Согласие на госпитализацию дала добровольно.</div>
+        </div>
+      </div>
+
+      <!-- ===== 6. Соматический статус ===== -->
+      <div class="sec-title" id="sec-physical">
+        <div class="sec-title-icon"><i data-lucide="activity"></i></div>
+        <span class="font-display">6. Соматический статус (Status praesens somaticus)</span>
+      </div>
+      <div class="card">
+        <div class="card-body card-prose">
+          <p>Общее состояние удовлетворительное. Телосложение астеническое. Рост 168 см, масса тела 52 кг (ИМТ 18.4 — дефицит). Кожные покровы бледные, чистые, тургор снижен. Лимфоузлы не увеличены.</p>
+          <p>Дыхание везикулярное, хрипов нет. ЧДД — 16/мин. Тоны сердца ритмичные, приглушены. ЧСС — 82/мин. АД — 105/70 мм рт. ст.</p>
+          <p>Живот мягкий, безболезненный при пальпации. Печень по краю рёберной дуги. Стул нерегулярный (склонность к запорам). Мочеиспускание без особенностей.</p>
+        </div>
+      </div>
+      <div class="vitals-row">
+        <div class="vital-card">
+          <div class="vital-val">105/70</div>
+          <div class="vital-label">АД, мм рт. ст.</div>
+        </div>
+        <div class="vital-card">
+          <div class="vital-val">82</div>
+          <div class="vital-label">ЧСС, уд/мин</div>
+        </div>
+        <div class="vital-card">
+          <div class="vital-val">36.4°</div>
+          <div class="vital-label">Температура</div>
+        </div>
+        <div class="vital-card warning">
+          <div class="vital-val">18.4</div>
+          <div class="vital-label">ИМТ (дефицит)</div>
+        </div>
+      </div>
+
+      <!-- ===== 7. Неврологический статус ===== -->
+      <div class="sec-title" id="sec-neuro">
+        <div class="sec-title-icon"><i data-lucide="scan"></i></div>
+        <span class="font-display">7. Неврологический статус (Status neurologicus)</span>
+      </div>
+      <div class="card">
+        <div class="card-body card-prose">
+          <p>Зрачки D=S, фотореакция живая. Глазные щели симметричны. Движения глазных яблок в полном объёме. Нистагма нет. Лицо симметрично. Язык по средней линии. Глоточный рефлекс сохранён.</p>
+          <p>Мышечный тонус без патологии. Сухожильные рефлексы D=S, оживлены. Патологических знаков нет. Чувствительность не нарушена. Координаторные пробы выполняет удовлетворительно. В позе Ромберга устойчива. Менингеальных знаков нет.</p>
+        </div>
+      </div>
+
+      <!-- ===== 8. Данные обследований ===== -->
+      <div class="sec-title" id="sec-tests">
+        <div class="sec-title-icon"><i data-lucide="test-tubes"></i></div>
+        <span class="font-display">8. Данные обследований</span>
+      </div>
+      <div class="card">
+        <div class="card-body card-prose">
+          <p><strong>ОАК (16.01.2026):</strong> Hb 128 г/л, эритроциты 4.2×10¹², лейкоциты 6.8×10⁹, тромбоциты 240×10⁹. Без патологии.</p>
+          <p><strong>Биохимия (16.01.2026):</strong> Глюкоза 4.8 ммоль/л, АЛТ 22 Ед/л, АСТ 19 Ед/л, креатинин 72 мкмоль/л. Норма.</p>
+          <p><strong>ЭКГ (16.01.2026):</strong> Синусовый ритм, ЧСС 74 уд/мин, без патологических изменений.</p>
+          <p><strong>Шкала Гамильтона (HDRS):</strong> 24 балла — тяжёлая депрессия.</p>
+          <p><strong>Шкала тревоги Бека:</strong> 32 балла — выраженная тревога.</p>
+        </div>
+      </div>
+
+      <!-- ===== 9. Дневник наблюдений ===== -->
+      <div class="sec-title" id="sec-diary">
+        <div class="sec-title-icon"><i data-lucide="notebook-pen"></i></div>
+        <span class="font-display">9. Дневник наблюдений</span>
+      </div>
+      <div class="card">
+        <div class="diary-entry">
+          <div class="diary-date"><div class="dd">16.01.2026</div><div class="dd-day">2-й день</div></div>
+          <div class="diary-content">
+            <div class="diary-text">Настроение подавленное, плачет. Сон с кветиапином — 5 часов (ранее 2–3). Аппетит отсутствует, ела через силу. Тревога выраженная, двигательное беспокойство. Начата титрация венлафаксина 75 мг.</div>
+            <div class="diary-doctor">Др. Иванова Е.А.</div>
+          </div>
+        </div>
+        <div class="diary-entry">
+          <div class="diary-date"><div class="dd">20.01.2026</div><div class="dd-day">6-й день</div></div>
+          <div class="diary-content">
+            <div class="diary-text">Незначительная положительная динамика. Сон 6 часов, засыпает легче. Тревога сохраняется, но интенсивность снижена. Начала посещать групповые занятия. Суицидальные мысли отрицает. Венлафаксин увеличен до 150 мг.</div>
+            <div class="diary-doctor">Др. Иванова Е.А.</div>
+          </div>
+        </div>
+        <div class="diary-entry">
+          <div class="diary-date"><div class="dd">27.01.2026</div><div class="dd-day">13-й день</div></div>
+          <div class="diary-content">
+            <div class="diary-text">Отмечает улучшение настроения. Стала более активна, общается с другими пациентами. Сон 7 часов. Аппетит появился. Тревога значительно уменьшилась, панических атак нет. Продолжает КПТ. Динамика положительная.</div>
+            <div class="diary-doctor">Др. Иванова Е.А.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 10. Назначенное лечение ===== -->
+      <div class="sec-title" id="sec-treatment">
+        <div class="sec-title-icon"><i data-lucide="pill"></i></div>
+        <span class="font-display">10. Назначенное лечение</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="med-card">
+          <div class="med-card-name"><div class="med-title">Венлафаксин</div><div class="med-group">Антидепрессант (СИОЗСН)</div></div>
+          <div class="med-card-dose"><div class="med-dose-val">75 мг → 150 мг</div><div class="med-dose-desc">2 р/сут, с титрацией</div></div>
+        </div>
+        <div class="med-card">
+          <div class="med-card-name"><div class="med-title">Кветиапин</div><div class="med-group">Атипичный антипсихотик (малые дозы)</div></div>
+          <div class="med-card-dose"><div class="med-dose-val">25 мг</div><div class="med-dose-desc">на ночь</div></div>
+        </div>
+        <div class="med-card">
+          <div class="med-card-name"><div class="med-title">Гидроксизин</div><div class="med-group">Анксиолитик</div></div>
+          <div class="med-card-dose"><div class="med-dose-val">25 мг</div><div class="med-dose-desc">при тревоге, до 3 р/сут</div></div>
+        </div>
+        <div class="med-card">
+          <div class="med-card-name"><div class="med-title">Когнитивно-поведенческая терапия</div><div class="med-group">Психотерапия</div></div>
+          <div class="med-card-dose"><div class="med-dose-val">2 р/нед</div><div class="med-dose-desc">индивидуальные сессии</div></div>
+        </div>
+      </div>
+
+      <!-- ===== 11. Эпикриз ===== -->
+      <div class="sec-title" id="sec-epicrisis">
+        <div class="sec-title-icon"><i data-lucide="file-check"></i></div>
+        <span class="font-display">11. Эпикриз</span>
+      </div>
+      <div class="card">
+        <div class="card-body card-prose">
+          <p>Пациентка Ковальски А.М., 34 лет, находится на лечении с 15.01.2026 с диагнозом: <strong>Рекуррентное депрессивное расстройство, текущий эпизод тяжёлой степени без психотических симптомов (F33.2)</strong>.</p>
+          <p>На фоне проводимого лечения отмечается положительная динамика: улучшение сна, повышение аппетита, снижение выраженности тревожной симптоматики. Суицидальные мысли отрицает.</p>
+          <p><strong>Рекомендации:</strong> продолжить терапию в текущем объёме, динамическое наблюдение, контроль анализов через 2 недели.</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedAI — Панель врача</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="page">
+  <!-- ===== Navigation ===== -->
+  <nav class="nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon"><i data-lucide="heart-pulse"></i></div>
+        <span class="nav-logo-text">MedAI</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="active">Панель</a>
+        <a href="#">Пациенты</a>
+        <a href="#">Приёмы</a>
+        <a href="medical-history.html">AI Ассистент</a>
+        <a href="#">Сообщения</a>
+      </div>
+    </div>
+    <div class="nav-right">
+      <div class="search-box">
+        <i data-lucide="search"></i>
+        <span>Поиск...</span>
+      </div>
+      <div class="avatar">DR</div>
+    </div>
+  </nav>
+
+  <!-- ===== Content ===== -->
+  <div class="page-content">
+    <!-- Header -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="font-display">Доброе утро, Др. Иванова</h1>
+        <p>Воскресенье, 8 февраля — 12 пациентов на сегодня</p>
+      </div>
+      <div class="page-header-right">
+        <button class="btn btn-outline" onclick="window.print()">
+          <i data-lucide="download"></i> Экспорт
+        </button>
+        <button class="btn btn-dark" onclick="openModal('newPatientOverlay')">
+          <i data-lucide="plus"></i> Новый пациент
+        </button>
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <div class="metrics-row">
+      <div class="metric-card">
+        <span class="label">Пациенты сегодня</span>
+        <span class="value font-mono">12</span>
+        <div class="change"><i data-lucide="trending-up"></i> +3 со вчера</div>
+      </div>
+      <div class="metric-card">
+        <span class="label">Приёмы</span>
+        <span class="value font-mono">8</span>
+        <div class="change"><i data-lucide="calendar"></i> Осталось 2</div>
+      </div>
+      <div class="metric-card">
+        <span class="label">AI Консультации</span>
+        <span class="value font-mono">24</span>
+        <div class="change"><i data-lucide="brain"></i> +12% за неделю</div>
+      </div>
+      <div class="metric-card">
+        <span class="label">Ожидают проверки</span>
+        <span class="value font-mono">5</span>
+        <div class="change"><i data-lucide="timer" class="warn"></i> 3 срочных</div>
+      </div>
+    </div>
+
+    <!-- Main: Patient List + AI Chat -->
+    <div class="main-content">
+      <!-- Patient List -->
+      <div class="patient-list">
+        <div class="patient-list-header">
+          <h2 class="font-display">Пациенты на сегодня</h2>
+          <a href="#">Все</a>
+        </div>
+        <div class="table-head">
+          <span class="col-patient">Пациент</span>
+          <span class="col-time">Время</span>
+          <span class="col-type">Тип</span>
+          <span class="col-status">Статус</span>
+        </div>
+
+        <div class="patient-row" onclick="openModal('patientCardOverlay')">
+          <div class="col-patient">
+            <div class="patient-avatar green">АК</div>
+            <div class="patient-info">
+              <span class="name">Анна Ковальски</span>
+              <span class="detail">Кардиология, повторный</span>
+            </div>
+          </div>
+          <span class="col-time font-mono">09:00</span>
+          <div class="col-type"><span class="badge badge-green">Очно</span></div>
+          <div class="col-status"><span class="badge badge-green">Подтверждён</span></div>
+        </div>
+
+        <div class="patient-row" onclick="openModal('patientCardOverlay')">
+          <div class="col-patient">
+            <div class="patient-avatar warm">МБ</div>
+            <div class="patient-info">
+              <span class="name">Михаил Белов</span>
+              <span class="detail">Обзор анализов</span>
+            </div>
+          </div>
+          <span class="col-time font-mono">10:30</span>
+          <div class="col-type"><span class="badge badge-blue">Онлайн</span></div>
+          <div class="col-status"><span class="badge badge-warm">Ожидание</span></div>
+        </div>
+
+        <div class="patient-row" onclick="openModal('patientCardOverlay')">
+          <div class="col-patient">
+            <div class="patient-avatar gray">ЕС</div>
+            <div class="patient-info">
+              <span class="name">Елена Соколова</span>
+              <span class="detail">Первичный приём</span>
+            </div>
+          </div>
+          <span class="col-time font-mono">11:15</span>
+          <div class="col-type"><span class="badge badge-green">Очно</span></div>
+          <div class="col-status"><span class="badge badge-green">Подтверждён</span></div>
+        </div>
+
+        <div class="patient-row" onclick="openModal('patientCardOverlay')">
+          <div class="col-patient">
+            <div class="patient-avatar green">ДП</div>
+            <div class="patient-info">
+              <span class="name">Дмитрий Петров</span>
+              <span class="detail">Проверка давления</span>
+            </div>
+          </div>
+          <span class="col-time font-mono">14:00</span>
+          <div class="col-type"><span class="badge badge-blue">Онлайн</span></div>
+          <div class="col-status"><span class="badge badge-gray">Запланирован</span></div>
+        </div>
+      </div>
+
+      <!-- AI Assistant Panel -->
+      <div class="ai-panel">
+        <div class="ai-header">
+          <div class="ai-header-left">
+            <div class="ai-icon"><i data-lucide="sparkles"></i></div>
+            <h3 class="font-display">AI Ассистент</h3>
+          </div>
+          <div class="ai-status">
+            <span class="ai-status-dot"></span> В сети
+          </div>
+        </div>
+        <div class="chat-messages">
+          <div class="msg user">
+            <div class="msg-bubble">
+              <span>Сравни последнюю ЭКГ Ковальски с результатами за январь</span>
+              <span class="msg-time">Только что</span>
+            </div>
+          </div>
+          <div class="msg ai">
+            <div class="ai-icon-sm"><i data-lucide="sparkles"></i></div>
+            <div class="msg-bubble">
+              <span>Готово. В январе — нормальный синусовый ритм. Сейчас — подъём ST 1.2мм в V1-V3. Рекомендую тропонин.</span>
+              <span class="msg-time">Только что</span>
+            </div>
+          </div>
+        </div>
+        <div class="chat-input">
+          <div class="chat-input-box">
+            <span>Спросить AI о пациенте...</span>
+            <i data-lucide="mic" class="mic"></i>
+            <i data-lucide="paperclip" class="clip"></i>
+          </div>
+          <div class="send-btn"><i data-lucide="send"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Patient Card Modal ===== -->
+<div class="overlay" id="patientCardOverlay" onclick="closeOverlay(event, 'patientCardOverlay')">
+  <div class="modal patient-card" onclick="event.stopPropagation()">
+    <div class="pc-left">
+      <div class="pc-profile">
+        <div class="pc-avatar">АК</div>
+        <div class="pc-name font-display">Анна Ковальски</div>
+        <div class="pc-meta">42 года · Женщина</div>
+        <div class="pc-id font-mono">ID: MED-2024-0847</div>
+        <div class="pc-status-badge"><span class="pc-status-dot"></span> Активный пациент</div>
+      </div>
+      <div class="divider"></div>
+      <div class="pc-section">
+        <div class="pc-section-title">Контактная информация</div>
+        <div class="pc-contact-row"><i data-lucide="phone"></i> +7 (903) 456-78-90</div>
+        <div class="pc-contact-row"><i data-lucide="mail"></i> anna.kowalski@mail.ru</div>
+        <div class="pc-contact-row"><i data-lucide="map-pin"></i> Москва, ул. Тверская 12</div>
+      </div>
+      <div class="divider"></div>
+      <div class="pc-section">
+        <div class="pc-section-title">Аллергии</div>
+        <div class="pc-tags">
+          <span class="tag-warn">Пенициллин</span>
+          <span class="tag-warn">Латекс</span>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="pc-section">
+        <div class="pc-section-title">Страховка</div>
+        <div class="pc-contact-row"><i data-lucide="shield-check" style="color:var(--accent)"></i> ОМС · Полис 1234567890</div>
+      </div>
+      <div class="pc-actions">
+        <button class="btn btn-dark btn-sm"><i data-lucide="message-circle"></i> Написать пациенту</button>
+        <a href="medical-history.html" class="btn btn-accent btn-sm"><i data-lucide="file-text"></i> Открыть историю болезни</a>
+      </div>
+    </div>
+
+    <div class="pc-right">
+      <div class="pc-right-header">
+        <h2 class="font-display">Медицинская карта</h2>
+        <div class="pc-right-header-actions">
+          <button class="btn btn-outline btn-sm"><i data-lucide="pencil"></i> Редактировать</button>
+          <div class="close-btn" onclick="closeModal('patientCardOverlay')"><i data-lucide="x"></i></div>
+        </div>
+      </div>
+
+      <div class="ai-fill-bar">
+        <span class="ai-spark"><i data-lucide="sparkles"></i></span>
+        <div class="ai-fill-info">
+          <span class="title">AI Заполнение карты</span>
+          <span class="desc">Голос · Файлы · Фото</span>
+        </div>
+        <button class="ai-fill-btn mic"><i data-lucide="mic"></i> Голос</button>
+        <button class="ai-fill-btn file"><i data-lucide="upload"></i> Файл</button>
+      </div>
+
+      <span class="section-title">Показатели здоровья</span>
+      <div class="vitals-row">
+        <div class="vital-card"><i data-lucide="heart"></i><span class="value font-mono">78</span><span class="label">Пульс, уд/мин</span></div>
+        <div class="vital-card"><i data-lucide="activity"></i><span class="value font-mono">135/85</span><span class="label">Давление</span></div>
+        <div class="vital-card"><i data-lucide="thermometer"></i><span class="value font-mono">36.6</span><span class="label">Температура, °C</span></div>
+        <div class="vital-card"><i data-lucide="droplets"></i><span class="value font-mono">98%</span><span class="label">SpO₂</span></div>
+      </div>
+
+      <span class="section-title">Текущие назначения</span>
+      <div class="meds-grid">
+        <div class="med-card">
+          <div class="med-icon"><i data-lucide="pill"></i></div>
+          <div class="med-info"><span class="name">Метопролол</span><span class="dose">50мг · 2 раза/день</span></div>
+        </div>
+        <div class="med-card">
+          <div class="med-icon"><i data-lucide="pill"></i></div>
+          <div class="med-info"><span class="name">Лизиноприл</span><span class="dose">10мг · 1 раз/день</span></div>
+        </div>
+      </div>
+
+      <span class="section-title">История визитов</span>
+      <div class="history-list">
+        <div class="history-item">
+          <span class="history-date font-mono">15.01.2026</span>
+          <div class="history-info">
+            <span class="title">ЭКГ + Консультация кардиолога</span>
+            <span class="note">Нормальный синусовый ритм. Продолжить терапию.</span>
+          </div>
+          <span class="badge badge-green">Завершён</span>
+        </div>
+        <div class="history-item">
+          <span class="history-date font-mono">03.12.2025</span>
+          <div class="history-info">
+            <span class="title">Общий анализ крови</span>
+            <span class="note">Показатели в норме. Холестерин чуть повышен.</span>
+          </div>
+          <span class="badge badge-green">Завершён</span>
+        </div>
+        <div class="history-item">
+          <span class="history-date font-mono">08.02.2026</span>
+          <div class="history-info">
+            <span class="title">Повторная ЭКГ + Кардиомаркеры</span>
+            <span class="note">Подъём ST 1.2мм. Назначен тропонин.</span>
+          </div>
+          <span class="badge badge-warm">В процессе</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== New Patient Modal ===== -->
+<div class="overlay" id="newPatientOverlay" onclick="closeOverlay(event, 'newPatientOverlay')">
+  <div class="modal new-patient-modal" onclick="event.stopPropagation()">
+    <div class="npm-header">
+      <div class="npm-header-left">
+        <div class="npm-header-icon"><i data-lucide="user-plus"></i></div>
+        <h2 class="font-display">Новый пациент</h2>
+      </div>
+      <div class="npm-close" onclick="closeModal('newPatientOverlay')"><i data-lucide="x"></i></div>
+    </div>
+    <div class="npm-body">
+      <!-- AI Bar -->
+      <div class="npm-ai-bar">
+        <div class="npm-ai-icon"><i data-lucide="sparkles"></i></div>
+        <div class="npm-ai-text">
+          <span class="title">AI Заполнение</span>
+          <span class="desc">Надиктуйте данные или загрузите документ — AI заполнит форму</span>
+        </div>
+        <div class="npm-ai-actions">
+          <button class="npm-ai-btn mic"><i data-lucide="mic"></i> Голос</button>
+          <button class="npm-ai-btn file"><i data-lucide="upload"></i> Файл</button>
+        </div>
+      </div>
+
+      <!-- Personal Data -->
+      <span class="form-section-title">Персональные данные</span>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Фамилия *</label>
+          <div class="form-input"><input type="text" placeholder="Введите фамилию"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Имя *</label>
+          <div class="form-input"><input type="text" placeholder="Введите имя"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Отчество</label>
+          <div class="form-input"><input type="text" placeholder="Введите отчество"></div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Дата рождения *</label>
+          <div class="form-input"><input type="text" placeholder="ДД.ММ.ГГГГ"><i data-lucide="calendar"></i></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Пол *</label>
+          <div class="form-input"><input type="text" placeholder="Выберите"><i data-lucide="chevron-down"></i></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Телефон *</label>
+          <div class="form-input"><input type="text" placeholder="+7 (___) ___-__-__"></div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Адрес проживания</label>
+          <div class="form-input"><input type="text" placeholder="Город, улица, дом, квартира"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <div class="form-input"><input type="text" placeholder="email@example.com"></div>
+        </div>
+      </div>
+
+      <div class="form-divider"></div>
+
+      <!-- Medical Data -->
+      <span class="form-section-title">Медицинские данные</span>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Вид госпитализации *</label>
+          <div class="form-input"><input type="text" value="Стационар" readonly><i data-lucide="chevron-down"></i></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Кем направлен</label>
+          <div class="form-input"><input type="text" placeholder="ПНД / Поликлиника / Самообращение"></div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Предварительный диагноз</label>
+          <div class="form-input search"><input type="text" placeholder="Начните вводить диагноз или код МКБ-10..."><i data-lucide="search"></i></div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Аллергии</label>
+          <div class="form-input"><input type="text" placeholder="Укажите известные аллергии"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Полис ОМС</label>
+          <div class="form-input"><input type="text" placeholder="Номер полиса"></div>
+        </div>
+      </div>
+
+      <div class="form-divider"></div>
+
+      <!-- Contact Person -->
+      <span class="form-section-title">Контактное лицо</span>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">ФИО контактного лица</label>
+          <div class="form-input"><input type="text" placeholder="ФИО родственника"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Степень родства</label>
+          <div class="form-input"><input type="text" placeholder="Выберите"><i data-lucide="chevron-down"></i></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Телефон контактного лица</label>
+          <div class="form-input"><input type="text" placeholder="+7 (___) ___-__-__"></div>
+        </div>
+      </div>
+    </div>
+    <div class="npm-footer">
+      <span class="npm-footer-note">* — обязательные поля</span>
+      <div class="npm-footer-actions">
+        <button class="btn-cancel" onclick="closeModal('newPatientOverlay')">Отмена</button>
+        <button class="btn-save"><i data-lucide="check"></i> Создать пациента</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>
