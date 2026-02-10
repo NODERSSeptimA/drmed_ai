@@ -62,8 +62,10 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
-            mkdir -p ${{ secrets.DEPLOY_PATH || '/opt/medai' }}/nginx
-            cat > ${{ secrets.DEPLOY_PATH || '/opt/medai' }}/.env << 'ENVEOF'
+            DEPLOY_DIR="${{ secrets.DEPLOY_PATH || '/opt/medai' }}"
+            sudo mkdir -p "$DEPLOY_DIR"/nginx
+            sudo chown -R $USER:$USER "$DEPLOY_DIR"
+            cat > "$DEPLOY_DIR"/.env << ENVEOF
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
             NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
@@ -72,7 +74,7 @@ jobs:
             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
             POSTGRES_DB=${{ secrets.POSTGRES_DB }}
             ENVEOF
-            chmod 600 ${{ secrets.DEPLOY_PATH || '/opt/medai' }}/.env
+            chmod 600 "$DEPLOY_DIR"/.env
 
       - name: Copy files to server
         uses: appleboy/scp-action@v0.1.7
@@ -90,24 +92,25 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
-            cd ${{ secrets.DEPLOY_PATH || '/opt/medai' }}
+            DEPLOY_DIR="${{ secrets.DEPLOY_PATH || '/opt/medai' }}"
+            cd "$DEPLOY_DIR"
 
             # Pull latest image
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
             # Check if SSL certs exist (first deploy vs redeploy)
-            if [ ! -d "/opt/medai/certbot-certs" ] && ! docker volume inspect medai_certbot-certs > /dev/null 2>&1; then
-              echo "First deploy — run 'bash scripts/init-server.sh' manually to get SSL certs"
+            if ! sudo docker volume inspect medai_certbot-certs > /dev/null 2>&1; then
+              echo "First deploy — run 'sudo bash scripts/init-server.sh' manually to get SSL certs"
               # Start without nginx SSL for now
-              docker compose --env-file .env up -d postgres app
+              sudo docker compose --env-file .env up -d postgres app
               sleep 10
-              docker compose exec -T app npx prisma db push --skip-generate
+              sudo docker compose exec -T app npx prisma db push --skip-generate
             else
               # Regular redeploy
-              docker compose --env-file .env up -d
+              sudo docker compose --env-file .env up -d
               sleep 10
-              docker compose exec -T app npx prisma db push --skip-generate
-              docker compose exec -T nginx nginx -s reload
+              sudo docker compose exec -T app npx prisma db push --skip-generate
+              sudo docker compose exec -T nginx nginx -s reload
             fi
 
             echo "Deployed successfully: $(date)"
