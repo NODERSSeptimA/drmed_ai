@@ -3,13 +3,27 @@ set -e
 
 DOMAIN="testaiassist.site"
 EMAIL="${CERTBOT_EMAIL:-admin@$DOMAIN}"
-DEPLOY_DIR="${DEPLOY_PATH:-/opt/medai}"
+
+# Auto-detect project root (where docker-compose.yml lives)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+DEPLOY_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 echo "=== MedAI Server Init ==="
 echo "Domain: $DOMAIN"
 echo "Deploy dir: $DEPLOY_DIR"
 
 cd "$DEPLOY_DIR"
+
+if [ ! -f "docker-compose.yml" ]; then
+  echo "ERROR: docker-compose.yml not found in $DEPLOY_DIR"
+  exit 1
+fi
+
+if [ ! -f ".env" ]; then
+  echo "ERROR: .env file not found in $DEPLOY_DIR"
+  echo "Create it first: cp .env.example .env && nano .env"
+  exit 1
+fi
 
 # 1. Start nginx with HTTP-only config for ACME challenge
 echo ""
