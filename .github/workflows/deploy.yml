@@ -54,7 +54,37 @@ jobs:
     environment: production
 
     steps:
-      - name: Deploy via SSH
+      - uses: actions/checkout@v4
+
+      - name: Generate .env on server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            mkdir -p ${{ secrets.DEPLOY_PATH || '/opt/medai' }}
+            cat > ${{ secrets.DEPLOY_PATH || '/opt/medai' }}/.env << 'ENVEOF'
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+            NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+            ENVEOF
+            chmod 600 ${{ secrets.DEPLOY_PATH || '/opt/medai' }}/.env
+
+      - name: Copy docker-compose to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          source: "docker-compose.yml"
+          target: ${{ secrets.DEPLOY_PATH || '/opt/medai' }}
+
+      - name: Deploy
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.DEPLOY_HOST }}
@@ -66,11 +96,13 @@ jobs:
             # Pull latest image
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
-            # Stop existing container
+            # Restart with new image + fresh .env
             docker compose down || true
+            docker compose --env-file .env up -d
 
-            # Start with new image
-            docker compose up -d
+            # Wait for postgres
+            echo "Waiting for PostgreSQL..."
+            sleep 10
 
             # Run migrations
             docker compose exec -T app npx prisma db push --skip-generate
