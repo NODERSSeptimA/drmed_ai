@@ -45,9 +45,6 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
 
   deploy:
     name: Deploy to Server

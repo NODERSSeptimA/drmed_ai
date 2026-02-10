@@ -14,9 +14,11 @@ COPY . .
 
 ARG DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
 ARG NEXTAUTH_SECRET="build-time-placeholder"
+ARG OPENAI_API_KEY="build-time-placeholder"
 
 ENV DATABASE_URL=$DATABASE_URL
 ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
+ENV OPENAI_API_KEY=$OPENAI_API_KEY
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN npx prisma generate
