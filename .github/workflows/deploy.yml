@@ -97,12 +97,12 @@ jobs:
             if ! sudo docker volume inspect medai_certbot-certs > /dev/null 2>&1; then
               echo "First deploy — run 'sudo bash scripts/init-server.sh' manually to get SSL certs"
               # Start without nginx SSL for now
-              sudo docker compose --env-file .env up -d postgres app
+              sudo docker compose --env-file .env up -d --force-recreate postgres app
               sleep 10
               sudo docker compose exec -T app npx prisma db push --skip-generate
             else
               # Regular redeploy
-              sudo docker compose --env-file .env up -d
+              sudo docker compose --env-file .env up -d --force-recreate
               sleep 10
               sudo docker compose exec -T app npx prisma db push --skip-generate
               sudo docker compose exec -T nginx nginx -s reload
