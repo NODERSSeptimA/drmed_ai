@@ -47,7 +47,7 @@ server {
 }
 NGINX
 
-docker compose --env-file .env up -d nginx
+docker compose --env-file .env up -d --no-deps nginx
 
 echo "Waiting for nginx..."
 sleep 3
@@ -109,24 +109,41 @@ server {
 }
 NGINX
 
-# 4. Start everything
+# 4. Restart nginx with SSL config + start postgres
 echo ""
-echo "--- Step 4: Starting all services ---"
+echo "--- Step 4: Starting postgres + reloading nginx ---"
 
-docker compose --env-file .env up -d
+docker compose --env-file .env up -d --no-deps postgres
+docker compose --env-file .env up -d --no-deps --force-recreate nginx
 
-echo "Waiting for services..."
-sleep 10
+echo "Waiting for postgres..."
+sleep 5
 
-# 5. Run migrations
+# 5. Try to start app (may fail if image not yet pushed to GHCR)
 echo ""
-echo "--- Step 5: Running database migrations ---"
+echo "--- Step 5: Starting app ---"
 
-docker compose exec -T app npx prisma db push --skip-generate
+if docker compose --env-file .env up -d app 2>/dev/null; then
+  echo "Waiting for app..."
+  sleep 10
 
-# 6. Set up auto-renewal cron
+  # 6. Run migrations
+  echo ""
+  echo "--- Step 6: Running database migrations ---"
+  docker compose exec -T app npx prisma db push --skip-generate
+else
+  echo ""
+  echo "WARNING: App image not found in registry."
+  echo "Push a git tag to trigger the first build:"
+  echo "  git tag v1.0.0 && git push origin v1.0.0"
+  echo ""
+  echo "After the GitHub Action completes, run:"
+  echo "  cd $DEPLOY_DIR && docker compose --env-file .env up -d"
+fi
+
+# 7. Set up auto-renewal cron
 echo ""
-echo "--- Step 6: Setting up certificate auto-renewal ---"
+echo "--- Step 7: Setting up certificate auto-renewal ---"
 
 CRON_JOB="0 3 * * * cd $DEPLOY_DIR && docker compose run --rm certbot renew --quiet && docker compose exec -T nginx nginx -s reload"
 (crontab -l 2>/dev/null | grep -v certbot; echo "$CRON_JOB") | crontab -
