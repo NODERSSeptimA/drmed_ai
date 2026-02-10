@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_VERSION: "20"
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+  typecheck-and-build:
+    name: TypeCheck & Build
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+
+      # Prisma generate needs DATABASE_URL but doesn't connect at build time
+      - name: Generate Prisma Client
+        run: npx prisma generate
+        env:
+          DATABASE_URL: "postgresql://user:pass@localhost:5432/ci?schema=public"
+
+      - name: Build
+        run: npm run build
+        env:
+          DATABASE_URL: "postgresql://user:pass@localhost:5432/ci?schema=public"
+          NEXTAUTH_SECRET: "ci-secret-not-real"
+          NEXTAUTH_URL: "http://localhost:3000"
+          OPENAI_API_KEY: "sk-ci-placeholder"
+
+  migrate:
+    name: Migrate DB (staging)
+    runs-on: ubuntu-latest
+    needs: typecheck-and-build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: medai_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run migrations
+        run: npx prisma db push --skip-generate
+        env:
+          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/medai_test?schema=public"
+
+      - name: Seed database
+        run: npx tsx prisma/seed.ts
+        env:
+          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/medai_test?schema=public"
