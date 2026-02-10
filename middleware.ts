@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth"
 
 export default auth((req) => {
-  const isLoggedIn = !!req.auth
+  const isLoggedIn = !!req.auth?.user
   const isLoginPage = req.nextUrl.pathname === "/login"
   const isApiAuth = req.nextUrl.pathname.startsWith("/api/auth")
 
