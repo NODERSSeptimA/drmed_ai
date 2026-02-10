@@ -100,11 +100,13 @@ jobs:
               sudo docker compose --env-file .env up -d --force-recreate postgres app
               sleep 10
               sudo docker compose exec -T app npx prisma db push --skip-generate
+              sudo docker compose exec -T app node prisma/seed-prod.js
             else
               # Regular redeploy
               sudo docker compose --env-file .env up -d --force-recreate
               sleep 10
               sudo docker compose exec -T app npx prisma db push --skip-generate
+              sudo docker compose exec -T app node prisma/seed-prod.js
               sudo docker compose exec -T nginx nginx -s reload
             fi
 
