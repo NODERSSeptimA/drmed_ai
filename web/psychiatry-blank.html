@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Осмотр психиатра — Бланк</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      line-height: 1.15;
+      color: #000;
+      background: #e0e0e0;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 10mm auto;
+      padding: 12mm 15mm 15mm 20mm;
+      background: #fff;
+      position: relative;
+      page-break-after: always;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page:last-child {
+      page-break-after: auto;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+      .page {
+        margin: 0;
+        padding: 12mm 15mm 15mm 20mm;
+        box-shadow: none;
+      }
+    }
+
+    /* === HEADER === */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6mm;
+      padding-bottom: 3mm;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 3mm;
+    }
+
+    .logo-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon img {
+      height: 18mm;
+      width: auto;
+    }
+
+
+    .header-right {
+      text-align: right;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .header-right .company-name {
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    /* === TITLE === */
+    .doc-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5mm;
+    }
+
+    /* === CONTENT === */
+    .content {
+      flex: 1;
+    }
+
+    /* Inline field: label + underline */
+    .field-inline {
+      display: flex;
+      align-items: baseline;
+      margin-bottom: 0;
+    }
+
+    .field-inline .label {
+      white-space: nowrap;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .field-inline .label-normal {
+      white-space: nowrap;
+      font-size: 14px;
+    }
+
+    .field-inline .line {
+      flex: 1;
+      border-bottom: 1px solid #000;
+      margin-left: 2mm;
+      min-height: 14px;
+    }
+
+    .field-inline .line-short {
+      width: 50mm;
+      border-bottom: 1px solid #000;
+      margin-left: 2mm;
+      min-height: 14px;
+    }
+
+    /* Row with two fields */
+    .field-row {
+      display: flex;
+      align-items: baseline;
+      margin-bottom: 0;
+    }
+
+    .field-row .field-inline {
+      margin-bottom: 0;
+    }
+
+    .field-row .field-inline:first-child {
+      flex: 2;
+    }
+
+    .field-row .field-inline:last-child {
+      flex: 1;
+      margin-left: 4mm;
+    }
+
+    /* Section title (bold) */
+    .section-title {
+      font-weight: bold;
+      font-size: 14px;
+      margin-top: 2mm;
+      margin-bottom: 0;
+    }
+
+    /* Blank lines for handwriting */
+    .blank-lines {
+      margin-bottom: 0;
+    }
+
+    .blank-line {
+      border-bottom: 1px solid #000;
+      height: 4mm;
+      width: 100%;
+    }
+
+    /* Regular text line */
+    .text-line {
+      font-size: 14px;
+      margin-bottom: 0;
+      line-height: 1.15;
+    }
+
+    .text-line b {
+      font-weight: bold;
+    }
+
+    /* Sub-item with dash */
+    .sub-item {
+      padding-left: 3mm;
+      font-size: 14px;
+      margin-bottom: 0;
+      display: flex;
+      align-items: baseline;
+    }
+
+    .sub-item .label-normal {
+      white-space: nowrap;
+    }
+
+    .sub-item .line {
+      flex: 1;
+      border-bottom: 1px solid #000;
+      margin-left: 2mm;
+      min-height: 14px;
+    }
+
+    /* Descriptive text */
+    .note-text {
+      font-size: 11px;
+      margin-bottom: 2mm;
+    }
+
+    /* === FOOTER === */
+    .footer {
+      margin-top: auto;
+      padding-top: 1mm;
+      font-size: 9px;
+      text-align: center;
+      color: #000;
+      line-height: 1.4;
+    }
+
+    .footer-number {
+      position: absolute;
+      bottom: 5mm;
+      right: 15mm;
+      font-size: 7px;
+      color: #999;
+    }
+
+    /* Combined field with middle text */
+    .field-combined {
+      display: flex;
+      align-items: baseline;
+      margin-bottom: 0;
+      flex-wrap: wrap;
+    }
+
+    .field-combined .label {
+      font-weight: bold;
+      white-space: nowrap;
+      font-size: 14px;
+    }
+
+    .field-combined .label-normal {
+      white-space: nowrap;
+      font-size: 14px;
+    }
+
+    .field-combined .line {
+      flex: 1;
+      border-bottom: 1px solid #000;
+      margin: 0 2mm;
+      min-height: 14px;
+    }
+
+    .field-combined .line-fixed {
+      width: 30mm;
+      border-bottom: 1px solid #000;
+      margin: 0 2mm;
+      min-height: 14px;
+    }
+
+    /* Signature area */
+    .signature-row {
+      display: flex;
+      align-items: baseline;
+      margin-bottom: 0;
+    }
+
+    .signature-row .label-normal {
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .signature-row .line {
+      flex: 1;
+      border-bottom: 1px solid #000;
+      margin-left: 2mm;
+      min-height: 14px;
+    }
+
+    .signature-row .spacer {
+      width: 20mm;
+    }
+
+    /* Date field */
+    .date-field {
+      display: flex;
+      align-items: baseline;
+      font-size: 14px;
+    }
+
+    .date-field .line-short {
+      width: 15mm;
+      border-bottom: 1px solid #000;
+      margin: 0 1mm;
+      min-height: 14px;
+    }
+
+    .date-field .line-medium {
+      width: 30mm;
+      border-bottom: 1px solid #000;
+      margin: 0 1mm;
+      min-height: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ======================== PAGE 1 ======================== -->
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-icon">
+        <img src="dynasty-logo.png" alt="Династия — сеть медицинских центров">
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="company-name">ООО «Династия-18»</div>
+      г. Санкт-Петербург, ул. Ленина д. 5<br>
+      тел: (812)385-50-80<br>
+      e-mail: info@meddynasty.ru<br>
+      www.meddynasty.ru
+    </div>
+  </div>
+
+  <!-- Title -->
+  <div class="doc-title" style="margin-bottom: 8mm;">Осмотр психиатра</div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- ФИО + Дата рождения -->
+    <div class="field-row">
+      <div class="field-inline">
+        <span class="label">ФИО пациента</span>
+        <span class="line"></span>
+      </div>
+      <div class="field-inline">
+        <span class="label">Дата рождения</span>
+        <span class="line"></span>
+      </div>
+    </div>
+
+    <!-- Ознакомлен -->
+    <div class="text-line" style="margin-top: 4mm;">
+      <b>С имеющейся документацией ознакомлен.</b>
+    </div>
+
+    <!-- Основания для осмотра -->
+    <div class="field-inline" style="margin-top: 0.5mm;">
+      <span class="label">Основания для осмотра</span>
+      <span class="label-normal" style="margin-left: 1mm;">(по данным наблюдения, мед. документов):</span>
+    </div>
+    <div class="blank-lines">
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+    </div>
+
+    <!-- Жалобы -->
+    <div class="section-title" style="margin-top: 3mm;">Жалобы:</div>
+    <div class="blank-lines">
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+    </div>
+
+    <!-- Анамнез -->
+    <div class="section-title" style="margin-top: 3mm; margin-bottom: 3mm;">Анамнез:</div>
+
+    <!-- Диспансерное наблюдение -->
+    <div class="field-inline">
+      <span class="label-normal">Диспансерное наблюдение у психиатра, нарколога, др. специалиста:</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- Нейроинфекции -->
+    <div class="field-inline">
+      <span class="label-normal">Нейроинфекции, профессиональные вредности:</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- ПАВ -->
+    <div class="field-inline">
+      <span class="label-normal">Пагубное употребление психоактивных веществ: алкоголь, наркотики, лекарственные средства</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- Психотравмы -->
+    <div class="field-inline">
+      <span class="label-normal">Психотравмирующие ситуации:</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- Суицидальные попытки -->
+    <div class="field-inline">
+      <span class="label-normal">Суицидальные попытки в прошлом:</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- Эпизоды нарушения сознания -->
+    <div class="field-inline">
+      <span class="label-normal">Эпизоды нарушения сознания, судорожные приступы, ЧМТ:</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- Хронические заболевания -->
+    <div class="text-line">Хронические заболевания и фармакотерапия:</div>
+    <div class="blank-lines">
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+    </div>
+
+    <!-- Дополнения -->
+    <div class="text-line" style="margin-top: 2mm;">Дополнения:</div>
+    <div class="blank-lines">
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+    </div>
+
+    <!-- Психический статус -->
+    <div class="section-title" style="margin-top: 6mm; margin-bottom: 3mm; font-size: 15px;">Психический статус:</div>
+
+    <!-- Сознание + ориентировка -->
+    <div class="field-inline">
+      <span class="label-normal">Сознание</span>
+      <span class="line" style="max-width: 45mm;"></span>
+      <span class="label-normal" style="margin-left: 2mm;">ориентировка</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- На вопросы отвечает -->
+    <div class="field-inline">
+      <span class="label-normal">На вопросы (&nbsp;&nbsp;&nbsp;&nbsp;) отвечает</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- Контакт -->
+    <div class="field-inline">
+      <span class="label-normal">Контакт с больным (&nbsp;&nbsp;&nbsp;&nbsp;) продуктивный</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- Речь -->
+    <div class="field-inline">
+      <span class="label-normal">Речь</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- Внимание -->
+    <div class="field-inline">
+      <span class="label-normal">Внимание</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- По данным наблюдения -->
+    <div class="field-inline">
+      <span class="label-normal">По данным наблюдения за пациентом</span>
+      <span class="line"></span>
+    </div>
+    <div class="blank-lines">
+      <div class="blank-line"></div>
+    </div>
+
+    <!-- Эмоциональные нарушения -->
+    <div class="field-inline">
+      <span class="label-normal">Эмоциональные нарушения:</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- Память + интеллект -->
+    <div class="field-inline">
+      <span class="label-normal">Нарушение памяти</span>
+      <span class="line" style="max-width: 40mm;"></span>
+      <span class="label-normal" style="margin-left: 2mm;">нарушения интеллекта</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- Нарушения мышления -->
+    <div class="text-line">Нарушения мышления (навязчивые; сверхценные; бредовые идеи и их содержание):</div>
+    <div class="blank-lines">
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+    </div>
+
+    <!-- Нарушения ощущений -->
+    <div class="text-line" style="margin-top: 1mm;">Нарушения ощущений:</div>
+
+    <div class="field-inline">
+      <span class="label-normal">- количественные (анестезия, гипо-, гиперстезия)</span>
+      <span class="line"></span>
+    </div>
+
+    <div class="field-inline">
+      <span class="label-normal">- качественные (синестезия, парестезия)</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- Нарушения восприятия -->
+    <div class="text-line" style="margin-top: 1mm;">Нарушения восприятия (иллюзии, галлюцинации, сенестопатии, деперсонализация, дереализация):</div>
+    <div class="blank-lines">
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    ИНН 7813615229, КПП 781301001, р/счет 40702810255000018946 в СЕВЕРО-ЗАПАДНЫЙ БАНК ОАО «СБЕРБАНК РОССИИ»,<br>
+    к/счет 30101810500000000653, БИК 044030653, ОКПО 31580617, ОКАТО 40288000000, ОГРН 1187847192719
+  </div>
+
+</div>
+
+<!-- ======================== PAGE 2 ======================== -->
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-icon">
+        <img src="dynasty-logo.png" alt="Династия — сеть медицинских центров">
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="company-name">ООО «Династия-18»</div>
+      г. Санкт-Петербург, ул. Ленина д. 5<br>
+      тел: (812)385-50-80<br>
+      e-mail: info@meddynasty.ru<br>
+      www.meddynasty.ru
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Двигательно-волевые нарушения -->
+    <div class="field-inline" style="margin-top: 2mm;">
+      <span class="label-normal">Двигательно-волевые нарушения (абулия, импульсивность, негативизм, каталепсия)</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- Суицидальные намерения -->
+    <div class="field-inline">
+      <span class="label-normal">Суицидальные намерения</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- Самооценка -->
+    <div class="field-inline">
+      <span class="label-normal">Самооценка психического состояния</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- Сомато-неврологический статус -->
+    <div class="text-line" style="margin-top: 5mm; font-weight: bold;">Сомато-неврологический статус:</div>
+    <div class="blank-lines">
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+    </div>
+
+    <!-- Динамика -->
+    <div class="text-line" style="margin-top: 4mm; font-weight: normal;">Динамика состояния за время наблюдения:</div>
+    <div class="blank-lines">
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+    </div>
+
+    <!-- Заключение -->
+    <div class="text-line" style="margin-top: 4mm;">
+      <b>Заключение:</b> выявленные особенности психического статуса <span style="display: inline-block; width: 30mm; border-bottom: 1px solid #000;"></span> указывают на наличие психического расстройства. В клинической картине отмечаются следующие симптомы:
+    </div>
+    <div class="blank-lines">
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+    </div>
+
+    <!-- Уровень нарушений -->
+    <div class="text-line" style="margin-top: 3mm;">
+      <b>Уровень нарушений:</b> <span style="display: inline-block; width: 20mm; border-bottom: 1px solid #000;"></span> психотический / дефицитарный. Исходя из данных истории болезни, анамнеза и состояния пациента, тип реагирования определяется как: эндогенный / экзогенно-органический / психогенный / смешанный
+    </div>
+    <div class="blank-lines">
+      <div class="blank-line"></div>
+    </div>
+
+    <!-- Диагноз -->
+    <div class="section-title" style="margin-top: 4mm;">Диагноз:</div>
+    <div class="blank-lines">
+      <div class="blank-line"></div>
+    </div>
+
+    <!-- Код МКБ -->
+    <div class="field-inline" style="margin-top: 1mm;">
+      <span class="label-normal">Код МКБ – 10: F</span>
+      <span class="line" style="max-width: 50mm;"></span>
+    </div>
+
+    <div class="blank-lines">
+      <div class="blank-line"></div>
+    </div>
+
+    <!-- План обследования -->
+    <div style="margin-top: 4mm; font-size: 14px; font-weight: bold; line-height: 1.15;">План обследования (консультации специалистов, ЭКГ, УЗИ, ФГ, ОАМ, ОАК, глюкоза крови,</div>
+    <div class="field-inline">
+      <span style="font-weight: bold; font-size: 14px; white-space: nowrap;">биохимический анализ крови)</span>
+      <span class="line"></span>
+    </div>
+    <div class="blank-lines">
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+    </div>
+
+    <!-- План лечения -->
+    <div class="field-inline" style="margin-top: 4mm;">
+      <span class="label"><span style="font-weight: bold;">План лечения</span></span>
+      <span class="line"></span>
+    </div>
+    <div class="blank-lines">
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+      <div class="blank-line"></div>
+    </div>
+
+    <!-- Повторный осмотр -->
+    <div style="margin-top: 6mm;">
+      <div class="date-field">
+        <span>Повторный осмотр "</span>
+        <span style="width: 8mm; border-bottom: 1px solid #000; min-height: 14px;"></span>
+        <span>"</span>
+        <span style="width: 20mm; border-bottom: 1px solid #000; margin: 0 1mm; min-height: 14px;"></span>
+        <span>20</span>
+        <span style="width: 8mm; border-bottom: 1px solid #000; margin: 0 1mm; min-height: 14px;"></span>
+        <span>г.</span>
+      </div>
+    </div>
+
+    <!-- Врач-психиатр + Подпись -->
+    <div style="margin-top: 5mm;">
+      <div class="signature-row">
+        <span class="label-normal">Врач-психиатр</span>
+        <span class="line"></span>
+        <span class="label-normal" style="margin-left: 5mm;">Подпись</span>
+        <span style="width: 30mm; border-bottom: 1px solid #000; margin-left: 2mm; min-height: 14px;"></span>
+      </div>
+    </div>
+
+    <!-- Дата -->
+    <div style="margin-top: 2mm;">
+      <div class="field-inline">
+        <span class="label-normal">Дата</span>
+        <span class="line" style="max-width: 35mm;"></span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    ИНН 7813615229, КПП 781301001, р/счет 40702810255000018946 в СЕВЕРО-ЗАПАДНЫЙ БАНК ОАО «СБЕРБАНК РОССИИ»,<br>
+    к/счет 30101810500000000653, БИК 044030653, ОКПО 31580617, ОКАТО 40288000000, ОГРН 1187847192719
+  </div>
+
+</div>
+
+</body>
+</html>

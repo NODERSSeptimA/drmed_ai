@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("doctor")
+  clinicId  String?
+  clinic    Clinic?  @relation(fields: [clinicId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  medicalHistories MedicalHistory[] @relation("DoctorHistories")
+  voiceSessions    VoiceSession[]
+}
+
+model Clinic {
+  id      String  @id @default(cuid())
+  name    String
+  address String?
+  phone   String?
+  email   String?
+  inn     String?
+  kpp     String?
+
+  users            User[]
+  patients         Patient[]
+  templates        Template[]
+}
+
+model Patient {
+  id              String   @id @default(cuid())
+  firstName       String
+  lastName        String
+  middleName      String?
+  birthDate       DateTime
+  gender          String
+  phone           String?
+  email           String?
+  address         String?
+  allergies       String[]
+  insuranceNumber String?
+  clinicId        String
+  clinic          Clinic   @relation(fields: [clinicId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  medicalHistories MedicalHistory[]
+}
+
+model Template {
+  id             String   @id @default(cuid())
+  title          String
+  specialization String
+  schema         Json
+  clinicId       String?
+  clinic         Clinic?  @relation(fields: [clinicId], references: [id])
+  createdAt      DateTime @default(now())
+
+  medicalHistories MedicalHistory[]
+}
+
+model MedicalHistory {
+  id              String   @id @default(cuid())
+  data            Json
+  status          String   @default("draft")
+  examinationDate DateTime @default(now())
+  patientId       String
+  patient         Patient  @relation(fields: [patientId], references: [id])
+  templateId      String
+  template        Template @relation(fields: [templateId], references: [id])
+  doctorId        String
+  doctor          User     @relation("DoctorHistories", fields: [doctorId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  voiceSessions VoiceSession[]
+}
+
+model VoiceSession {
+  id               String   @id @default(cuid())
+  status           String   @default("idle")
+  currentSection   String?
+  conversationLog  Json     @default("[]")
+  medicalHistoryId String
+  medicalHistory   MedicalHistory @relation(fields: [medicalHistoryId], references: [id])
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}

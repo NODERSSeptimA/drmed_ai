@@ -1,0 +1,418 @@
+{
+  "id": "psychiatry-examination-v1",
+  "title": "Осмотр психиатра",
+  "specialization": "psychiatry",
+  "clinic": {
+    "name": "ООО «Династия-18»",
+    "address": "г. Санкт-Петербург, ул. Ленина д. 5",
+    "phone": "(812) 385-50-80",
+    "email": "info@meddynasty.ru",
+    "website": "www.meddynasty.ru",
+    "inn": "7813615229",
+    "kpp": "781301001"
+  },
+
+  "sections": [
+    {
+      "id": "patient_info",
+      "title": "Данные пациента",
+      "icon": "user",
+      "fields": [
+        {
+          "id": "full_name",
+          "label": "ФИО пациента",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Назовите, пожалуйста, ФИО пациента.",
+          "followUpPrompts": ["Можете уточнить отчество?"]
+        },
+        {
+          "id": "birth_date",
+          "label": "Дата рождения",
+          "type": "date",
+          "required": true,
+          "aiPrompt": "Дата рождения пациента?"
+        }
+      ]
+    },
+
+    {
+      "id": "examination_basis",
+      "title": "Основания для осмотра",
+      "icon": "clipboard-list",
+      "description": "С имеющейся документацией ознакомлен.",
+      "fields": [
+        {
+          "id": "basis",
+          "label": "Основания для осмотра (по данным наблюдения, мед. документов)",
+          "type": "prose",
+          "required": true,
+          "aiPrompt": "Каковы основания для осмотра? Что послужило причиной обращения — данные наблюдения, медицинские документы?",
+          "followUpPrompts": ["Есть ли направление от другого специалиста?"]
+        }
+      ]
+    },
+
+    {
+      "id": "complaints",
+      "title": "Жалобы",
+      "icon": "message-circle",
+      "fields": [
+        {
+          "id": "complaints_text",
+          "label": "Жалобы",
+          "type": "prose",
+          "required": true,
+          "aiPrompt": "Опишите жалобы пациента при осмотре.",
+          "followUpPrompts": [
+            "Как давно отмечаются эти жалобы?",
+            "Есть ли ещё что-то, на что пациент обращает внимание?"
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "anamnesis",
+      "title": "Анамнез",
+      "icon": "history",
+      "fields": [
+        {
+          "id": "dispensary_observation",
+          "label": "Диспансерное наблюдение у психиатра, нарколога, др. специалиста",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Состоит ли пациент на диспансерном наблюдении у психиатра, нарколога или другого специалиста?"
+        },
+        {
+          "id": "neuroinfections",
+          "label": "Нейроинфекции, профессиональные вредности",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Есть ли в анамнезе нейроинфекции или профессиональные вредности?"
+        },
+        {
+          "id": "substance_use",
+          "label": "Пагубное употребление психоактивных веществ: алкоголь, наркотики, лекарственные средства",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Отмечается ли употребление психоактивных веществ — алкоголь, наркотики, лекарственные средства?"
+        },
+        {
+          "id": "psychotrauma",
+          "label": "Психотравмирующие ситуации",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Есть ли психотравмирующие ситуации в анамнезе?"
+        },
+        {
+          "id": "suicide_attempts",
+          "label": "Суицидальные попытки в прошлом",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Были ли суицидальные попытки в прошлом?"
+        },
+        {
+          "id": "consciousness_episodes",
+          "label": "Эпизоды нарушения сознания, судорожные приступы, ЧМТ",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Отмечались ли эпизоды нарушения сознания, судорожные приступы или черепно-мозговые травмы?"
+        },
+        {
+          "id": "chronic_diseases",
+          "label": "Хронические заболевания и фармакотерапия",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Какие хронические заболевания имеются? Какую фармакотерапию получает?"
+        },
+        {
+          "id": "anamnesis_additions",
+          "label": "Дополнения",
+          "type": "prose",
+          "required": false,
+          "aiPrompt": "Есть ли что-то ещё важное в анамнезе, что стоит добавить?"
+        }
+      ]
+    },
+
+    {
+      "id": "mental_status",
+      "title": "Психический статус",
+      "icon": "brain",
+      "fields": [
+        {
+          "id": "consciousness",
+          "label": "Сознание",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Опишите состояние сознания пациента."
+        },
+        {
+          "id": "orientation",
+          "label": "Ориентировка",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Как ориентирован пациент — в месте, времени, собственной личности?"
+        },
+        {
+          "id": "question_response",
+          "label": "На вопросы отвечает",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Как пациент отвечает на вопросы? Адекватно, по существу, с задержкой?"
+        },
+        {
+          "id": "contact_productive",
+          "label": "Контакт с больным — продуктивный",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Контакт с пациентом продуктивный? Опишите характер контакта."
+        },
+        {
+          "id": "speech",
+          "label": "Речь",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Опишите речь пациента — темп, связность, громкость."
+        },
+        {
+          "id": "attention",
+          "label": "Внимание",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Как обстоит дело с вниманием пациента?"
+        },
+        {
+          "id": "observation_data",
+          "label": "По данным наблюдения за пациентом",
+          "type": "prose",
+          "required": false,
+          "aiPrompt": "Что отмечаете по данным наблюдения за пациентом?"
+        },
+        {
+          "id": "emotional_disorders",
+          "label": "Эмоциональные нарушения",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Есть ли эмоциональные нарушения? Опишите фон настроения, аффект."
+        },
+        {
+          "id": "memory_disorders",
+          "label": "Нарушение памяти",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Есть ли нарушения памяти?"
+        },
+        {
+          "id": "intellect_disorders",
+          "label": "Нарушения интеллекта",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Отмечаются ли нарушения интеллекта?"
+        },
+        {
+          "id": "thinking_disorders",
+          "label": "Нарушения мышления (навязчивые; сверхценные; бредовые идеи и их содержание)",
+          "type": "prose",
+          "required": true,
+          "aiPrompt": "Есть ли нарушения мышления — навязчивые, сверхценные или бредовые идеи? Если да, опишите содержание."
+        },
+        {
+          "id": "sensation_quantitative",
+          "label": "Нарушения ощущений — количественные (анестезия, гипо-, гиперстезия)",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Отмечаются ли количественные нарушения ощущений — анестезия, гипостезия, гиперстезия?"
+        },
+        {
+          "id": "sensation_qualitative",
+          "label": "Нарушения ощущений — качественные (синестезия, парестезия)",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Есть ли качественные нарушения ощущений — синестезия, парестезия?"
+        },
+        {
+          "id": "perception_disorders",
+          "label": "Нарушения восприятия (иллюзии, галлюцинации, сенестопатии, деперсонализация, дереализация)",
+          "type": "prose",
+          "required": true,
+          "aiPrompt": "Выявляются ли нарушения восприятия — иллюзии, галлюцинации, сенестопатии, деперсонализация, дереализация?"
+        },
+        {
+          "id": "motor_volitional",
+          "label": "Двигательно-волевые нарушения (абулия, импульсивность, негативизм, каталепсия)",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Есть ли двигательно-волевые нарушения — абулия, импульсивность, негативизм, каталепсия?"
+        },
+        {
+          "id": "suicidal_intentions",
+          "label": "Суицидальные намерения",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Отмечаются ли суицидальные намерения у пациента?"
+        },
+        {
+          "id": "self_assessment",
+          "label": "Самооценка психического состояния",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "Как пациент оценивает своё психическое состояние?"
+        }
+      ]
+    },
+
+    {
+      "id": "somatic_neurological",
+      "title": "Сомато-неврологический статус",
+      "icon": "activity",
+      "fields": [
+        {
+          "id": "somatic_neuro_text",
+          "label": "Сомато-неврологический статус",
+          "type": "prose",
+          "required": true,
+          "aiPrompt": "Опишите сомато-неврологический статус пациента.",
+          "followUpPrompts": [
+            "Как с рефлексами, координацией?",
+            "Есть ли очаговая неврологическая симптоматика?"
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "dynamics",
+      "title": "Динамика состояния за время наблюдения",
+      "icon": "trending-up",
+      "fields": [
+        {
+          "id": "dynamics_text",
+          "label": "Динамика состояния за время наблюдения",
+          "type": "prose",
+          "required": false,
+          "aiPrompt": "Какова динамика состояния пациента за время наблюдения?"
+        }
+      ]
+    },
+
+    {
+      "id": "conclusion",
+      "title": "Заключение",
+      "icon": "file-check",
+      "fields": [
+        {
+          "id": "conclusion_features",
+          "label": "Выявленные особенности психического статуса, указывающие на наличие психического расстройства",
+          "type": "prose",
+          "required": true,
+          "aiPrompt": "Какие выявленные особенности психического статуса указывают на наличие психического расстройства? Какие симптомы отмечаются в клинической картине?"
+        },
+        {
+          "id": "disorder_level",
+          "label": "Уровень нарушений",
+          "type": "select",
+          "options": ["психотический", "дефицитарный"],
+          "required": true,
+          "aiPrompt": "Уровень нарушений — психотический или дефицитарный?"
+        },
+        {
+          "id": "reaction_type",
+          "label": "Тип реагирования",
+          "type": "select",
+          "options": ["эндогенный", "экзогенно-органический", "психогенный", "смешанный"],
+          "required": true,
+          "aiPrompt": "Какой тип реагирования вы определяете — эндогенный, экзогенно-органический, психогенный или смешанный?"
+        }
+      ]
+    },
+
+    {
+      "id": "diagnosis",
+      "title": "Диагноз",
+      "icon": "stethoscope",
+      "fields": [
+        {
+          "id": "diagnosis_text",
+          "label": "Диагноз",
+          "type": "prose",
+          "required": true,
+          "aiPrompt": "Сформулируйте диагноз."
+        },
+        {
+          "id": "icd_code",
+          "label": "Код МКБ-10",
+          "type": "text",
+          "prefix": "F",
+          "required": true,
+          "aiPrompt": "Какой код по МКБ-10?"
+        }
+      ]
+    },
+
+    {
+      "id": "examination_plan",
+      "title": "План обследования",
+      "icon": "test-tubes",
+      "description": "Консультации специалистов, ЭКГ, УЗИ, ФГ, ОАМ, ОАК, глюкоза крови, биохимический анализ крови",
+      "fields": [
+        {
+          "id": "examination_plan_text",
+          "label": "План обследования",
+          "type": "prose",
+          "required": true,
+          "aiPrompt": "Какой план обследования назначаете? Консультации специалистов, ЭКГ, УЗИ, ФГ, анализы?"
+        }
+      ]
+    },
+
+    {
+      "id": "treatment_plan",
+      "title": "План лечения",
+      "icon": "pill",
+      "fields": [
+        {
+          "id": "treatment_plan_text",
+          "label": "План лечения",
+          "type": "prose",
+          "required": true,
+          "aiPrompt": "Какой план лечения вы назначаете?",
+          "followUpPrompts": [
+            "Дозировки и кратность приёма?",
+            "Назначаете ли психотерапию?"
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "follow_up",
+      "title": "Повторный осмотр",
+      "icon": "calendar",
+      "fields": [
+        {
+          "id": "follow_up_date",
+          "label": "Дата повторного осмотра",
+          "type": "date",
+          "required": false,
+          "aiPrompt": "Когда назначаете повторный осмотр?"
+        },
+        {
+          "id": "doctor_name",
+          "label": "Врач-психиатр",
+          "type": "text",
+          "required": true,
+          "aiPrompt": "ФИО врача-психиатра для подписи?"
+        },
+        {
+          "id": "examination_date",
+          "label": "Дата осмотра",
+          "type": "date",
+          "required": true,
+          "aiPrompt": "Дата осмотра?"
+        }
+      ]
+    }
+  ]
+}
