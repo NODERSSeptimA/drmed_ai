@@ -76,15 +76,6 @@ jobs:
             ENVEOF
             chmod 600 "$DEPLOY_DIR"/.env
 
-      - name: Copy files to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          source: "docker-compose.yml,nginx/nginx.conf,scripts/init-server.sh"
-          target: ${{ secrets.DEPLOY_PATH || '/opt/medai' }}
-
       - name: Deploy
         uses: appleboy/ssh-action@v1
         with:
@@ -95,7 +86,11 @@ jobs:
             DEPLOY_DIR="${{ secrets.DEPLOY_PATH || '/opt/medai' }}"
             cd "$DEPLOY_DIR"
 
-            # Pull latest image
+            # Update config files from git
+            git fetch --all
+            git checkout origin/main -- docker-compose.yml nginx/nginx.conf scripts/init-server.sh
+
+            # Pull latest Docker image
             sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
             # Check if SSL certs exist (first deploy vs redeploy)
