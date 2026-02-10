@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Old HTML prototype
+    "web/**",
+    "nextjs-app/**",
   ]),
 ]);
 

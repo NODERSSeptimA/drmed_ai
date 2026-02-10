@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
 import {
   Mic,
@@ -60,18 +60,14 @@ export default function VoiceSessionPage() {
   const [loading, setLoading] = useState(true)
   const dialogEndRef = useRef<HTMLDivElement>(null)
 
-  const loadSession = useCallback(async () => {
-    const res = await fetch(`/api/voice-session/${params.id}`)
-    if (res.ok) {
-      const data = await res.json()
-      setSessionData(data)
-    }
-    setLoading(false)
-  }, [params.id])
-
   useEffect(() => {
-    loadSession()
-  }, [loadSession])
+    const load = async () => {
+      const res = await fetch(`/api/voice-session/${params.id}`)
+      if (res.ok) setSessionData(await res.json())
+      setLoading(false)
+    }
+    load()
+  }, [params.id])
 
   const sections: TemplateSection[] = sessionData?.medicalHistory.template.schema.sections || []
 

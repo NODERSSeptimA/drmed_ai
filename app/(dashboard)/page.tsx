@@ -45,8 +45,12 @@ export default function DashboardPage() {
   }, [])
 
   useEffect(() => {
-    loadPatients()
-  }, [loadPatients])
+    const load = async () => {
+      const res = await fetch("/api/patients")
+      if (res.ok) setPatients(await res.json())
+    }
+    load()
+  }, [])
 
   async function handlePatientClick(patient: { id: string }) {
     const res = await fetch(`/api/patients/${patient.id}`)

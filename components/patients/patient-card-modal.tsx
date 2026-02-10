@@ -1,9 +1,8 @@
 "use client"
 
 import { format } from "date-fns"
-import { ru } from "date-fns/locale"
 import { useState, useCallback } from "react"
-import { X, Phone, Mail, MapPin, ShieldCheck, Heart, Activity, Thermometer, Droplets, Pill, FileText, MessageCircle, Sparkles, Mic, Upload, Pencil, Loader2, Plus } from "lucide-react"
+import { Phone, Mail, MapPin, ShieldCheck, Heart, Activity, Thermometer, Droplets, Pill, FileText, Sparkles, Mic, Upload, Pencil, Loader2, Plus } from "lucide-react"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

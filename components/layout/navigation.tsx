@@ -6,7 +6,6 @@ import { signOut } from "next-auth/react"
 import { HeartPulse, Search, LogOut } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 
 interface NavigationProps {

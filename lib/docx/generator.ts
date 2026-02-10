@@ -115,23 +115,6 @@ function textLine(s: string, opts?: { bold?: boolean; size?: number; before?: nu
   })
 }
 
-/** Multi-line text: label then content below */
-function textBlock(label: string, value: string, opts?: { bold?: boolean; before?: number }): Paragraph[] {
-  const result: Paragraph[] = []
-  result.push(textLine(label + (value ? "" : ""), { bold: opts?.bold, before: opts?.before }))
-  if (value) {
-    result.push(new Paragraph({
-      spacing: { after: 20 },
-      children: [t(value)],
-    }))
-  } else {
-    // empty underlines for handwriting
-    result.push(blankULine())
-    result.push(blankULine())
-  }
-  return result
-}
-
 /** An underlined blank line (border-bottom) for writing */
 function blankULine(): Paragraph {
   return new Paragraph({
