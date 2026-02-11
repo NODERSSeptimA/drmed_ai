@@ -40,6 +40,23 @@ export interface SpeechToTextResult {
   confidence: number
 }
 
+// Realtime API types
+
+export interface RealtimeSessionRequest {
+  sessionId: string
+  templateSections: {
+    id: string
+    title: string
+    fields?: { id: string; label: string; type: string; options?: unknown[] }[]
+  }[]
+  initialData?: Record<string, Record<string, unknown>>
+}
+
+export interface RealtimeSessionResponse {
+  token: string
+  expiresAt: string
+}
+
 // Voice session types
 
 export interface VoiceSessionMessage {

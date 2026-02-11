@@ -18,7 +18,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { useVoiceSession, type VoiceSessionPhase } from "@/lib/hooks/use-voice-session"
+import { useRealtimeVoiceSession, type VoiceSessionPhase } from "@/lib/hooks/use-realtime-voice-session"
 
 interface TemplateSection {
   id: string
@@ -84,7 +84,7 @@ export default function VoiceSessionPage() {
     }
   })() : undefined
 
-  const voiceSession = useVoiceSession({
+  const voiceSession = useRealtimeVoiceSession({
     sessionId: (params.id as string) || "",
     medicalHistoryId: sessionData?.medicalHistoryId || "",
     templateSections: sections.map((s) => ({
@@ -260,7 +260,7 @@ export default function VoiceSessionPage() {
                     <h2 className="font-display text-lg font-medium">Начать голосовую сессию</h2>
                     <p className="text-sm text-muted-foreground mt-1 max-w-sm">
                       AI задаст вопросы по {sections.length} секциям шаблона.
-                      Отвечайте голосом и говорите <strong>&laquo;Следующий вопрос&raquo;</strong> когда закончите ответ.
+                      Отвечайте голосом. AI автоматически перейдёт к следующему вопросу.
                     </p>
                   </div>
                   <Button onClick={voiceSession.start} className="gap-2">
@@ -354,7 +354,7 @@ export default function VoiceSessionPage() {
                     </Button>
                     <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 text-red-600 text-sm">
                       <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0" />
-                      Слушаю...<span className="hidden sm:inline"> скажите &laquo;Следующий вопрос&raquo;</span>
+                      Слушаю...<span className="hidden sm:inline"> AI слушает</span>
                     </div>
                     <Button variant="outline" size="sm" className="gap-2" onClick={voiceSession.completeSession}>
                       <Square className="w-4 h-4" /> Завершить
