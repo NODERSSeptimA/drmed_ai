@@ -30,6 +30,11 @@ interface UseVoiceSessionOptions {
 }
 
 const CHUNK_DURATION_MS = 15000
+
+// Minimal silent WAV — used to "unlock" Audio element on mobile browsers
+// during user gesture so later programmatic play() calls are allowed
+const SILENT_WAV =
+  "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA=="
 const TRIGGER_NEXT = "следующий вопрос"
 const TRIGGER_END = "завершить сессию"
 
@@ -165,7 +170,9 @@ export function useVoiceSession({
     setFilledData(data)
   }
 
-  // Play TTS audio, resolves when playback ends
+  // Play TTS audio, resolves when playback ends.
+  // Reuses the unlocked Audio element from audioRef (unlocked in start/resume
+  // during user gesture) so mobile browsers allow programmatic playback.
   const playQuestion = async (text: string): Promise<void> => {
     setPhase("playing")
     try {
@@ -180,19 +187,21 @@ export function useVoiceSession({
       const url = URL.createObjectURL(blob)
 
       return new Promise<void>((resolve) => {
-        const audio = new Audio(url)
+        const audio = audioRef.current || new Audio()
         audioRef.current = audio
         audio.onended = () => {
           URL.revokeObjectURL(url)
-          audioRef.current = null
           resolve()
         }
         audio.onerror = () => {
           URL.revokeObjectURL(url)
-          audioRef.current = null
           resolve()
         }
-        audio.play()
+        audio.src = url
+        audio.play().catch(() => {
+          URL.revokeObjectURL(url)
+          resolve()
+        })
       })
     } catch {
       // If TTS fails, just continue
@@ -379,6 +388,15 @@ export function useVoiceSession({
 
   const start = async () => {
     setError(null)
+
+    // Unlock audio playback on mobile browsers: play a silent WAV
+    // synchronously from the user gesture context (before any await).
+    // This "warms up" the Audio element so later play() calls succeed.
+    const audio = audioRef.current || new Audio()
+    audioRef.current = audio
+    audio.src = SILENT_WAV
+    audio.play().catch(() => {})
+
     // Request mic upfront so permission prompt appears before session starts
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -399,7 +417,7 @@ export function useVoiceSession({
     isListeningRef.current = false
     if (audioRef.current) {
       audioRef.current.pause()
-      audioRef.current = null
+      // Keep audioRef alive — the element stays "unlocked" for resume
     }
     stopStream()
     setPhase("paused")
@@ -407,6 +425,11 @@ export function useVoiceSession({
   }
 
   const resumeSession = async () => {
+    // Re-unlock audio on mobile (called from user gesture context)
+    if (audioRef.current) {
+      audioRef.current.src = SILENT_WAV
+      audioRef.current.play().catch(() => {})
+    }
     const lastAi = [...conversationLogRef.current].reverse().find((m) => m.role === "ai")
     if (lastAi) {
       await playQuestionRef.current(lastAi.text)
@@ -418,7 +441,6 @@ export function useVoiceSession({
     isListeningRef.current = false
     if (audioRef.current) {
       audioRef.current.pause()
-      audioRef.current = null
     }
     stopStream()
     setPartialTranscript("")
@@ -433,6 +455,7 @@ export function useVoiceSession({
       isListeningRef.current = false
       if (audioRef.current) {
         audioRef.current.pause()
+        audioRef.current.src = ""
         audioRef.current = null
       }
       stopStream()
