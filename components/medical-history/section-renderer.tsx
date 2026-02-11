@@ -117,9 +117,9 @@ export function SectionRenderer({ section, sectionIndex, data, editing, onFieldC
       return renderField(field)
     }
     return (
-      <div key={field.id} className="flex items-baseline gap-2 py-1.5 border-b border-border/50 last:border-b-0">
-        <span className="text-sm text-muted-foreground shrink-0">{field.label}:</span>
-        <span className="text-sm">{value || "—"}</span>
+      <div key={field.id} className="py-1.5 border-b border-border/50 last:border-b-0 min-w-0">
+        <span className="text-sm text-muted-foreground">{field.label}:</span>{" "}
+        <span className="text-sm break-words">{value || "—"}</span>
       </div>
     )
   }
@@ -137,14 +137,14 @@ export function SectionRenderer({ section, sectionIndex, data, editing, onFieldC
       )
     }
     return (
-      <div key={f1.id} className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4 py-1.5 border-b border-border/50">
-        <div className="flex items-baseline gap-2 flex-1">
-          <span className="text-sm text-muted-foreground shrink-0">{f1.label}:</span>
-          <span className="text-sm">{v1 || "—"}</span>
+      <div key={f1.id} className="flex flex-col sm:flex-row gap-2 sm:gap-4 py-1.5 border-b border-border/50">
+        <div className="flex-1 min-w-0">
+          <span className="text-sm text-muted-foreground">{f1.label}:</span>{" "}
+          <span className="text-sm break-words">{v1 || "—"}</span>
         </div>
-        <div className="flex items-baseline gap-2 flex-1">
-          <span className="text-sm text-muted-foreground shrink-0">{f2.label}:</span>
-          <span className="text-sm">{v2 || "—"}</span>
+        <div className="flex-1 min-w-0">
+          <span className="text-sm text-muted-foreground">{f2.label}:</span>{" "}
+          <span className="text-sm break-words">{v2 || "—"}</span>
         </div>
       </div>
     )
