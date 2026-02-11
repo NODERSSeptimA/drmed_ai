@@ -91,15 +91,30 @@ jobs:
             git fetch --all
             git checkout origin/main -- docker-compose.yml nginx/nginx.conf scripts/init-server.sh
 
-            # Pull latest Docker image
-            sudo docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            # Login to GHCR (use PAT if set, otherwise try without auth for public packages)
+            if [ -n "${{ secrets.GHCR_PAT }}" ]; then
+              echo "${{ secrets.GHCR_PAT }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            fi
 
-            # Migrations + seed run automatically via entrypoint
-            # Just start/restart all services
-            sudo docker compose --env-file .env up -d --force-recreate
+            # Pull latest image explicitly
+            echo "=== Pulling latest image ==="
+            sudo docker pull ghcr.io/nodersseptima/drmed_ai:latest
+
+            # Show image info for debugging
+            echo "=== Image digest ==="
+            sudo docker inspect --format='{{index .RepoDigests 0}}' ghcr.io/nodersseptima/drmed_ai:latest || true
+
+            # Stop old containers, recreate with new image
+            echo "=== Recreating containers ==="
+            sudo docker compose --env-file .env up -d --force-recreate --pull always
             sleep 5
 
-            # Check if app started successfully
+            # Verify what's running
+            echo "=== Running containers ==="
+            sudo docker compose ps
+            echo "=== App image ID ==="
+            sudo docker compose images app
+            echo "=== Recent app logs ==="
             sudo docker compose logs --tail 20 app
 
             echo "Deployed successfully: $(date)"

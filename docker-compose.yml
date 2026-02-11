@@ -1,6 +1,6 @@
 services:
   app:
-    image: ghcr.io/${GITHUB_REPOSITORY:-nodersseptima/drmed_ai}:latest
+    image: ghcr.io/nodersseptima/drmed_ai:latest
     restart: unless-stopped
     expose:
       - "3000"
