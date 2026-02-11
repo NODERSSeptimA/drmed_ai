@@ -89,9 +89,9 @@ export function PatientCardModal({ patient, open, onOpenChange }: PatientCardMod
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100vw-2rem)] max-w-[900px] sm:max-w-[900px] p-0 gap-0 overflow-hidden">
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-[900px] sm:max-w-[900px] p-0 gap-0 overflow-hidden max-h-[90vh]">
         <DialogTitle className="sr-only">Карта пациента</DialogTitle>
-        <div className="flex flex-col md:flex-row min-h-[500px]">
+        <div className="flex flex-col md:flex-row min-h-[500px] max-h-[85vh] overflow-y-auto md:overflow-hidden">
           {/* Left Panel */}
           <div className="w-full md:w-[280px] bg-secondary/50 p-6 flex flex-col gap-4 border-r border-border">
             <div className="text-center space-y-2">
@@ -212,7 +212,7 @@ export function PatientCardModal({ patient, open, onOpenChange }: PatientCardMod
 
             {/* Vitals */}
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Показатели здоровья</p>
-            <div className="grid grid-cols-4 gap-3 mb-5">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
               <div className="bg-secondary/50 rounded-xl p-3 text-center">
                 <Heart className="w-4 h-4 text-muted-foreground mx-auto mb-1" />
                 <p className="text-lg font-mono font-medium">78</p>
@@ -237,7 +237,7 @@ export function PatientCardModal({ patient, open, onOpenChange }: PatientCardMod
 
             {/* Medications */}
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Текущие назначения</p>
-            <div className="grid grid-cols-2 gap-3 mb-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
               <div className="flex items-center gap-3 bg-secondary/50 rounded-xl p-3">
                 <div className="w-8 h-8 rounded-lg bg-blue-bg flex items-center justify-center">
                   <Pill className="w-4 h-4 text-blue" />

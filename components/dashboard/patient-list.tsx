@@ -53,10 +53,10 @@ export function PatientList({ patients, onPatientClick }: PatientListProps) {
         <h2 className="font-display text-lg font-medium">Пациенты на сегодня</h2>
         <span className="text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors">Все</span>
       </div>
-      <div className="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-5 py-2 text-xs text-muted-foreground border-b border-border">
+      <div className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto_auto] gap-x-4 px-5 py-2 text-xs text-muted-foreground border-b border-border">
         <span>Пациент</span>
-        <span className="w-16 text-center">Время</span>
-        <span className="w-20 text-center">Тип</span>
+        <span className="w-16 text-center hidden sm:block">Время</span>
+        <span className="w-20 text-center hidden sm:block">Тип</span>
         <span className="w-24 text-center">Статус</span>
       </div>
       {patients.map((patient, i) => {
@@ -67,7 +67,7 @@ export function PatientList({ patients, onPatientClick }: PatientListProps) {
         return (
           <div
             key={patient.id}
-            className="grid grid-cols-[1fr_auto_auto_auto] gap-x-4 px-5 py-3 items-center border-b border-border last:border-b-0 hover:bg-secondary/50 cursor-pointer transition-colors"
+            className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto_auto] gap-x-4 px-5 py-3 items-center border-b border-border last:border-b-0 hover:bg-secondary/50 cursor-pointer transition-colors"
             onClick={() => onPatientClick(patient)}
           >
             <div className="flex items-center gap-3">
@@ -81,8 +81,8 @@ export function PatientList({ patients, onPatientClick }: PatientListProps) {
                 </p>
               </div>
             </div>
-            <span className="text-sm font-mono text-center w-16">{time}</span>
-            <div className="w-20 flex justify-center">
+            <span className="text-sm font-mono text-center w-16 hidden sm:block">{time}</span>
+            <div className="w-20 hidden sm:flex justify-center">
               <Badge variant="outline" className="border-medgreen/30 text-medgreen bg-medgreen/5">Очно</Badge>
             </div>
             <div className="w-24 flex justify-center">

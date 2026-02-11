@@ -182,8 +182,39 @@ export default function VoiceSessionPage() {
         )}
       </div>
 
+      {/* Mobile section pills */}
+      <div className="lg:hidden border-b border-border bg-card/50 px-4">
+        <div className="flex gap-2 py-2 overflow-x-auto no-scrollbar">
+          {sections.map((section) => {
+            const isCompleted = completedSections.includes(section.id)
+            const isCurrent = currentSection === section.id
+            return (
+              <div
+                key={section.id}
+                className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap ${
+                  isCurrent
+                    ? "bg-medgreen/15 text-medgreen"
+                    : isCompleted
+                    ? "bg-green-500/10 text-green-600"
+                    : "bg-secondary text-muted-foreground/60"
+                }`}
+              >
+                {isCompleted ? (
+                  <CheckCircle2 className="w-3 h-3" />
+                ) : isCurrent ? (
+                  <ArrowRight className="w-3 h-3" />
+                ) : (
+                  <Circle className="w-3 h-3" />
+                )}
+                {section.title}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
       {/* Body */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
         {/* Sections sidebar */}
         <div className="w-64 border-r border-border bg-card/50 p-4 overflow-y-auto hidden lg:block">
           <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">Секции</h3>
@@ -253,7 +284,7 @@ export default function VoiceSessionPage() {
                     <User className="w-4 h-4 text-blue-500" />
                   )}
                 </div>
-                <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm ${
+                <div className={`max-w-[90%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 text-sm ${
                   msg.role === "ai"
                     ? "bg-card border border-border"
                     : "bg-blue-500/10 text-foreground"
@@ -269,7 +300,7 @@ export default function VoiceSessionPage() {
                 <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-blue-500/10">
                   <User className="w-4 h-4 text-blue-500" />
                 </div>
-                <div className="max-w-[75%] rounded-2xl px-4 py-2.5 text-sm bg-blue-500/5 text-muted-foreground border border-dashed border-blue-200">
+                <div className="max-w-[90%] sm:max-w-[75%] rounded-2xl px-4 py-2.5 text-sm bg-blue-500/5 text-muted-foreground border border-dashed border-blue-200">
                   {partialTranscript}
                   <span className="inline-block w-1.5 h-4 bg-blue-400 animate-pulse ml-1 align-middle rounded-full" />
                 </div>
@@ -315,15 +346,15 @@ export default function VoiceSessionPage() {
               {error && (
                 <p className="text-xs text-red-500 mb-2">{error}</p>
               )}
-              <div className="flex items-center justify-center gap-3">
+              <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
                 {phase === "listening" ? (
                   <>
                     <Button variant="outline" size="sm" className="gap-2" onClick={voiceSession.pauseSession}>
                       <Pause className="w-4 h-4" /> Пауза
                     </Button>
                     <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 text-red-600 text-sm">
-                      <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                      Слушаю... скажите &laquo;Следующий вопрос&raquo;
+                      <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0" />
+                      Слушаю...<span className="hidden sm:inline"> скажите &laquo;Следующий вопрос&raquo;</span>
                     </div>
                     <Button variant="outline" size="sm" className="gap-2" onClick={voiceSession.completeSession}>
                       <Square className="w-4 h-4" /> Завершить

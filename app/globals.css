@@ -104,3 +104,6 @@
 .font-display {
   font-family: var(--font-fraunces), Georgia, serif;
 }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

@@ -7,6 +7,7 @@ import { ru } from "date-fns/locale"
 import { FileText, Building2, Calendar, MapPin, Pencil, Printer, Download, Save, X, Mic, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SidebarNav } from "@/components/medical-history/sidebar-nav"
+import { MobileSectionNav } from "@/components/medical-history/mobile-section-nav"
 import { SectionRenderer } from "@/components/medical-history/section-renderer"
 import { AiFillBar } from "@/components/medical-history/ai-fill-bar"
 
@@ -177,22 +178,22 @@ export default function MedicalHistoryPage() {
             {editing ? (
               <>
                 <Button variant="ghost" size="sm" className="gap-1.5" onClick={() => { setEditing(false); setFormData(history.data || {}) }}>
-                  <X className="w-4 h-4" /> Отмена
+                  <X className="w-4 h-4" /> <span className="hidden sm:inline">Отмена</span>
                 </Button>
                 <Button size="sm" className="gap-1.5" onClick={handleSave} disabled={saving}>
-                  <Save className="w-4 h-4" /> {saving ? "Сохранение..." : "Сохранить"}
+                  <Save className="w-4 h-4" /> <span className="hidden sm:inline">{saving ? "Сохранение..." : "Сохранить"}</span>
                 </Button>
               </>
             ) : (
               <>
                 <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setEditing(true)}>
-                  <Pencil className="w-4 h-4" /> Редактировать
+                  <Pencil className="w-4 h-4" /> <span className="hidden sm:inline">Редактировать</span>
                 </Button>
                 <Button variant="outline" size="sm" className="gap-1.5" onClick={() => window.print()}>
-                  <Printer className="w-4 h-4" /> Печать
+                  <Printer className="w-4 h-4" /> <span className="hidden sm:inline">Печать</span>
                 </Button>
                 <Button size="sm" className="gap-1.5" onClick={handleExport}>
-                  <Download className="w-4 h-4" /> Экспорт в Word
+                  <Download className="w-4 h-4" /> <span className="hidden sm:inline">Экспорт в Word</span>
                 </Button>
               </>
             )}
@@ -202,12 +203,13 @@ export default function MedicalHistoryPage() {
 
       {/* Body */}
       <div className="flex-1 px-4 lg:px-8 xl:px-20 py-6">
+        <MobileSectionNav sections={sections} />
         <div className="flex gap-6">
           <SidebarNav sections={sections} />
 
           <div className="flex-1 min-w-0 space-y-6">
             {/* AI Fill Bar + Voice Session */}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
               <div className="flex-1">
                 <AiFillBar
               sections={sections.map((s) => ({

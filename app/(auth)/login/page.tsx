@@ -65,6 +65,7 @@ export default function LoginPage() {
                 placeholder="doctor@dynastia18.ru"
                 required
                 autoComplete="email"
+                className="h-11"
               />
             </div>
             <div className="space-y-2">
@@ -76,6 +77,7 @@ export default function LoginPage() {
                 placeholder="Введите пароль"
                 required
                 autoComplete="current-password"
+                className="h-11"
               />
             </div>
             {error && (
@@ -83,7 +85,7 @@ export default function LoginPage() {
             )}
             <Button
               type="submit"
-              className="w-full"
+              className="w-full h-11"
               disabled={loading}
             >
               {loading ? "Вход..." : "Войти"}

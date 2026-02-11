@@ -118,7 +118,7 @@ export function AiChatPanel() {
   }
 
   return (
-    <div className="bg-card border border-border rounded-2xl flex flex-col h-full min-h-[400px]">
+    <div className="bg-card border border-border rounded-2xl flex flex-col h-full min-h-[300px] sm:min-h-[400px]">
       <div className="flex items-center justify-between p-5 pb-3 border-b border-border">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-medgreen/15 flex items-center justify-center">
@@ -146,7 +146,7 @@ export function AiChatPanel() {
               </div>
             )}
             <div className={cn(
-              "rounded-2xl px-4 py-2.5 max-w-[80%]",
+              "rounded-2xl px-4 py-2.5 max-w-[85%] sm:max-w-[80%]",
               msg.role === "user"
                 ? "bg-foreground text-background"
                 : "bg-secondary"
@@ -176,15 +176,22 @@ export function AiChatPanel() {
             {isTranscribing ? (
               <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
             ) : (
-              <Mic
-                className={cn(
-                  "w-4 h-4 cursor-pointer hover:text-foreground",
-                  isRecording ? "text-red-500 animate-pulse" : "text-muted-foreground"
-                )}
+              <button
+                type="button"
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center -m-2.5"
                 onClick={isRecording ? stopRecording : startRecording}
-              />
+              >
+                <Mic
+                  className={cn(
+                    "w-4 h-4 cursor-pointer hover:text-foreground",
+                    isRecording ? "text-red-500 animate-pulse" : "text-muted-foreground"
+                  )}
+                />
+              </button>
             )}
-            <Paperclip className="w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground" />
+            <button type="button" className="min-w-[44px] min-h-[44px] flex items-center justify-center -m-2.5">
+              <Paperclip className="w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground" />
+            </button>
           </div>
           <Button size="icon" className="rounded-full shrink-0" onClick={handleSend} disabled={isStreaming}>
             <Send className="w-4 h-4" />

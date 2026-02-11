@@ -130,14 +130,14 @@ export function SectionRenderer({ section, sectionIndex, data, editing, onFieldC
     const v2 = (data[f2.id] as string) || ""
     if (editing) {
       return (
-        <div key={f1.id} className="grid grid-cols-2 gap-4">
+        <div key={f1.id} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {renderField(f1)}
           {renderField(f2)}
         </div>
       )
     }
     return (
-      <div key={f1.id} className="flex items-baseline gap-4 py-1.5 border-b border-border/50">
+      <div key={f1.id} className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4 py-1.5 border-b border-border/50">
         <div className="flex items-baseline gap-2 flex-1">
           <span className="text-sm text-muted-foreground shrink-0">{f1.label}:</span>
           <span className="text-sm">{v1 || "—"}</span>
@@ -156,7 +156,7 @@ export function SectionRenderer({ section, sectionIndex, data, editing, onFieldC
   if (section.id === "patient_info") {
     return (
       <SectionWrapper id={section.id} icon={Icon} index={sectionIndex} title={section.title}>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {section.fields?.map(renderField)}
         </div>
       </SectionWrapper>
@@ -265,7 +265,7 @@ export function SectionRenderer({ section, sectionIndex, data, editing, onFieldC
             </p>
           </DiagnosisBlock>
           {editing && (
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {section.fields?.filter((f) => f.id === "disorder_level" || f.id === "reaction_type").map(renderField)}
             </div>
           )}
@@ -295,7 +295,7 @@ export function SectionRenderer({ section, sectionIndex, data, editing, onFieldC
   if (section.id === "follow_up") {
     return (
       <SectionWrapper id={section.id} icon={Icon} index={sectionIndex} title={section.title}>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {section.fields?.map(renderField)}
         </div>
       </SectionWrapper>
@@ -333,7 +333,7 @@ function SectionWrapper({
           {index + 1}. {title}
         </span>
       </div>
-      <div className="bg-card border border-border rounded-2xl p-5">
+      <div className="bg-card border border-border rounded-2xl p-4 sm:p-5">
         {description && (
           <p className="text-sm font-medium mb-3">{description}</p>
         )}

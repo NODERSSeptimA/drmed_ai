@@ -95,7 +95,7 @@ export function NewPatientModal({ open, onOpenChange, onCreated }: NewPatientMod
 
           {/* Personal Data */}
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Персональные данные</p>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="lastName">Фамилия *</Label>
               <Input id="lastName" placeholder="Введите фамилию" {...register("lastName")} />
@@ -112,7 +112,7 @@ export function NewPatientModal({ open, onOpenChange, onCreated }: NewPatientMod
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="birthDate">Дата рождения *</Label>
               <Input id="birthDate" type="date" {...register("birthDate")} />
@@ -136,7 +136,7 @@ export function NewPatientModal({ open, onOpenChange, onCreated }: NewPatientMod
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="address">Адрес</Label>
               <Input id="address" placeholder="Город, улица, дом" {...register("address")} />
@@ -147,7 +147,7 @@ export function NewPatientModal({ open, onOpenChange, onCreated }: NewPatientMod
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="insuranceNumber">Полис ОМС</Label>
               <Input id="insuranceNumber" placeholder="Номер полиса" {...register("insuranceNumber")} />

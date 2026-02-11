@@ -64,15 +64,17 @@ export function AiFillBar({ sections, onFill }: AiFillBarProps) {
 
   return (
     <div className="bg-medgreen/5 border border-medgreen/15 rounded-xl overflow-hidden">
-      <div className="flex items-center gap-3 p-4">
-        <div className="w-10 h-10 rounded-xl bg-medgreen/15 flex items-center justify-center shrink-0">
-          <Sparkles className="w-5 h-5 text-medgreen" />
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-4">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-10 h-10 rounded-xl bg-medgreen/15 flex items-center justify-center shrink-0">
+            <Sparkles className="w-5 h-5 text-medgreen" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium">AI Заполнение осмотра психиатра</p>
+            <p className="text-xs text-muted-foreground">Надиктуйте осмотр — AI заполнит все разделы по шаблону клиники «Династия»</p>
+          </div>
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium">AI Заполнение осмотра психиатра</p>
-          <p className="text-xs text-muted-foreground">Надиктуйте осмотр — AI заполнит все разделы по шаблону клиники «Династия»</p>
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
           <Button
             variant="outline"
             size="sm"
