@@ -370,6 +370,10 @@ export function useRealtimeVoiceSession({
 
     switch (type) {
       case "response.audio.delta": {
+        if (!isPlayingAudioRef.current) {
+          // AI just started speaking — clear any echo captured in the input buffer
+          sendWsEvent({ type: "input_audio_buffer.clear" })
+        }
         isPlayingAudioRef.current = true
         if (phaseRef.current !== "playing") {
           updatePhase("playing")
@@ -485,7 +489,7 @@ export function useRealtimeVoiceSession({
           console.log("Realtime event:", type, msg)
         }
     }
-  }, [updatePhase, schedulePlayback, updateConversationLog, handleFunctionCall])
+  }, [updatePhase, schedulePlayback, updateConversationLog, handleFunctionCall, sendWsEvent])
 
   // --- Mic Setup ---
 
@@ -497,6 +501,8 @@ export function useRealtimeVoiceSession({
 
     workletNode.port.onmessage = (event: MessageEvent) => {
       const { pcm16 } = event.data as { pcm16: ArrayBuffer }
+      // Mute mic input while AI is speaking to prevent echo feedback on mobile
+      if (isPlayingAudioRef.current || phaseRef.current === "playing") return
       if (pcm16 && wsRef.current?.readyState === WebSocket.OPEN) {
         sendWsEvent({
           type: "input_audio_buffer.append",
