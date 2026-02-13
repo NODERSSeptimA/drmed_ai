@@ -72,6 +72,7 @@ model MedicalHistory {
   id              String   @id @default(cuid())
   data            Json
   status          String   @default("draft")
+  visitType       String   @default("clinic")
   examinationDate DateTime @default(now())
   patientId       String
   patient         Patient  @relation(fields: [patientId], references: [id])

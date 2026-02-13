@@ -4,8 +4,9 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { ru } from "date-fns/locale"
-import { FileText, Building2, Calendar, MapPin, Pencil, Printer, Download, Save, X, Mic, ArrowLeft } from "lucide-react"
+import { FileText, Building2, Calendar, MapPin, Pencil, Printer, Download, Save, X, ArrowLeft, Car } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { SidebarNav } from "@/components/medical-history/sidebar-nav"
 import { MobileSectionNav } from "@/components/medical-history/mobile-section-nav"
 import { SectionRenderer } from "@/components/medical-history/section-renderer"
@@ -28,6 +29,7 @@ interface MedicalHistoryResponse {
   id: string
   data: Record<string, Record<string, unknown>>
   status: string
+  visitType: string
   examinationDate: string
   patient: {
     firstName: string
@@ -149,7 +151,7 @@ export default function MedicalHistoryPage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <div className="border-b border-border bg-card px-4 lg:px-8 xl:px-20 py-4">
+      <div className="sticky top-0 z-50 border-b border-border bg-card px-4 lg:px-8 xl:px-20 py-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-3">
@@ -159,6 +161,12 @@ export default function MedicalHistoryPage() {
               <h1 className="font-display text-xl lg:text-2xl font-medium flex items-center gap-2">
                 <FileText className="w-5 h-5" />
                 {history.template.title}
+                <Badge variant="outline" className={history.visitType === "home"
+                  ? "border-amber-500/30 text-amber-600 bg-amber-50 text-xs font-normal gap-1"
+                  : "border-medgreen/30 text-medgreen bg-medgreen/5 text-xs font-normal gap-1"
+                }>
+                  {history.visitType === "home" ? <><Car className="w-3 h-3" /> Выездной</> : <><Building2 className="w-3 h-3" /> В клинике</>}
+                </Badge>
               </h1>
             </div>
             <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
@@ -208,42 +216,32 @@ export default function MedicalHistoryPage() {
           <SidebarNav sections={sections} />
 
           <div className="flex-1 min-w-0 space-y-6">
-            {/* AI Fill Bar + Voice Session */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-              <div className="flex-1">
-                <AiFillBar
-              sections={sections.map((s) => ({
-                id: s.id,
-                title: s.title,
-                fields: s.fields?.map((f) => ({
-                  id: f.id,
-                  label: f.label,
-                  type: f.type,
-                  options: f.options,
-                })),
-              }))}
-              onFill={(data) => {
-                setFormData((prev) => {
-                  const merged = { ...prev }
-                  for (const [sectionId, fields] of Object.entries(data)) {
-                    merged[sectionId] = { ...merged[sectionId], ...fields }
-                  }
-                  return merged
-                })
-                setEditing(true)
-              }}
-            />
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-1.5 shrink-0"
-                onClick={handleVoiceSession}
-                disabled={creatingVoiceSession}
-              >
-                <Mic className="w-4 h-4" />
-                {creatingVoiceSession ? "Создание..." : "Голосовая сессия"}
-              </Button>
+            {/* AI Fill Bar */}
+            <div className="sticky top-[73px] z-30 bg-background pb-3">
+              <AiFillBar
+                sections={sections.map((s) => ({
+                  id: s.id,
+                  title: s.title,
+                  fields: s.fields?.map((f) => ({
+                    id: f.id,
+                    label: f.label,
+                    type: f.type,
+                    options: f.options,
+                  })),
+                }))}
+                onFill={(data) => {
+                  setFormData((prev) => {
+                    const merged = { ...prev }
+                    for (const [sectionId, fields] of Object.entries(data)) {
+                      merged[sectionId] = { ...merged[sectionId], ...fields }
+                    }
+                    return merged
+                  })
+                  setEditing(true)
+                }}
+                onVoiceSession={handleVoiceSession}
+                voiceSessionLoading={creatingVoiceSession}
+              />
             </div>
 
             {/* Sections */}

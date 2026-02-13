@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json()
-  const { patientId, templateId, data } = body
+  const { patientId, templateId, data, visitType } = body
 
   if (!patientId || !templateId) {
     return NextResponse.json({ error: "patientId and templateId required" }, { status: 400 })
@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
       doctorId: session.user.id,
       data: data || {},
       status: "draft",
+      ...(visitType === "home" ? { visitType: "home" } : {}),
     },
   })
 

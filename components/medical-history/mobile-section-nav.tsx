@@ -47,7 +47,7 @@ export function MobileSectionNav({ sections }: MobileSectionNavProps) {
   }
 
   return (
-    <div className="lg:hidden sticky top-[72px] z-40 bg-background border-b border-border -mx-4 px-4 overflow-hidden">
+    <div className="lg:hidden sticky top-[73px] z-40 bg-background border-b border-border -mx-4 px-4 overflow-hidden">
       <div className="flex gap-2 py-2 overflow-x-auto no-scrollbar">
         {sections.map((section, i) => (
           <button

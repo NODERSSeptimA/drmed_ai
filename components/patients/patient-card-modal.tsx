@@ -1,8 +1,8 @@
 "use client"
 
 import { format } from "date-fns"
-import { useState, useCallback } from "react"
-import { Phone, Mail, MapPin, ShieldCheck, Heart, Activity, Thermometer, Droplets, Pill, FileText, Sparkles, Mic, Upload, Pencil, Loader2, Plus } from "lucide-react"
+import { useState } from "react"
+import { Phone, Mail, MapPin, ShieldCheck, Heart, Activity, Thermometer, Droplets, Pill, FileText, Sparkles, Upload, Pencil, Loader2, Plus, Building2, Car } from "lucide-react"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -10,7 +10,6 @@ import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useVoiceRecorder } from "@/lib/hooks/use-voice-recorder"
 
 interface PatientCardModalProps {
   patient: {
@@ -49,16 +48,12 @@ function getAge(birthDate: string) {
 export function PatientCardModal({ patient, open, onOpenChange }: PatientCardModalProps) {
   const router = useRouter()
   const [creatingHistory, setCreatingHistory] = useState(false)
+  const [showVisitTypeChoice, setShowVisitTypeChoice] = useState(false)
 
-  const onTranscribed = useCallback((text: string) => {
-    alert(`Распознанный текст:\n\n${text}`)
-  }, [])
-
-  const { isRecording, isTranscribing, startRecording, stopRecording } = useVoiceRecorder({ onTranscribed })
-
-  async function handleCreateHistory() {
+  async function handleCreateHistory(visitType: "clinic" | "home") {
     if (!patient || creatingHistory) return
     setCreatingHistory(true)
+    setShowVisitTypeChoice(false)
     try {
       const templatesRes = await fetch("/api/templates")
       const templates = await templatesRes.json()
@@ -68,7 +63,7 @@ export function PatientCardModal({ patient, open, onOpenChange }: PatientCardMod
       const res = await fetch("/api/medical-history", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ patientId: patient.id, templateId }),
+        body: JSON.stringify({ patientId: patient.id, templateId, visitType }),
       })
       if (res.ok) {
         const history = await res.json()
@@ -158,20 +153,42 @@ export function PatientCardModal({ patient, open, onOpenChange }: PatientCardMod
                   </Button>
                 </Link>
               )}
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full gap-2"
-                onClick={handleCreateHistory}
-                disabled={creatingHistory}
-              >
-                {creatingHistory ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                ) : (
+              {showVisitTypeChoice ? (
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-muted-foreground text-center">Тип осмотра:</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full gap-2"
+                    onClick={() => handleCreateHistory("clinic")}
+                    disabled={creatingHistory}
+                  >
+                    {creatingHistory ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Building2 className="w-3.5 h-3.5" />}
+                    В клинике
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full gap-2"
+                    onClick={() => handleCreateHistory("home")}
+                    disabled={creatingHistory}
+                  >
+                    {creatingHistory ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Car className="w-3.5 h-3.5" />}
+                    Выездной осмотр
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full gap-2"
+                  onClick={() => setShowVisitTypeChoice(true)}
+                  disabled={creatingHistory}
+                >
                   <Plus className="w-3.5 h-3.5" />
-                )}
-                {creatingHistory ? "Создание..." : "Новая история болезни"}
-              </Button>
+                  Новая история болезни
+                </Button>
+              )}
             </div>
           </div>
 
@@ -189,22 +206,8 @@ export function PatientCardModal({ patient, open, onOpenChange }: PatientCardMod
               <Sparkles className="w-4 h-4 text-medgreen shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium">AI Заполнение карты</p>
-                <p className="text-xs text-muted-foreground">Голос · Файлы · Фото</p>
+                <p className="text-xs text-muted-foreground">Файлы · Фото</p>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className={cn("gap-1.5 text-xs shrink-0", isRecording && "border-red-500 text-red-500")}
-                onClick={isRecording ? stopRecording : startRecording}
-                disabled={isTranscribing}
-              >
-                {isTranscribing ? (
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                ) : (
-                  <Mic className={cn("w-3 h-3", isRecording && "animate-pulse")} />
-                )}
-                {isRecording ? "Стоп" : isTranscribing ? "..." : "Голос"}
-              </Button>
               <Button variant="outline" size="sm" className="gap-1.5 text-xs shrink-0">
                 <Upload className="w-3 h-3" /> Файл
               </Button>

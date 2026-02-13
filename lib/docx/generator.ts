@@ -13,8 +13,9 @@ import {
   BorderStyle,
   TabStopType,
 } from "docx"
-import { readFileSync } from "fs"
+import { readFileSync, existsSync } from "fs"
 import { join } from "path"
+import PizZip from "pizzip"
 
 interface MedicalHistoryData {
   [key: string]: Record<string, unknown>
@@ -27,6 +28,7 @@ interface GeneratorInput {
   examinationDate: string
   patientName: string
   patientBirthDate?: string
+  visitType?: string
   data: MedicalHistoryData
   sections: Array<{
     id: string
@@ -60,6 +62,30 @@ const NOBORDER = {
   bottom: { style: BorderStyle.NONE, size: 0 },
   left: { style: BorderStyle.NONE, size: 0 },
   right: { style: BorderStyle.NONE, size: 0 },
+} as const
+
+// Company profiles per visit type
+const COMPANY_PROFILES = {
+  home: {
+    name: "ООО «Династия-18»",
+    address: "г. Санкт-Петербург, ул. Ленина д. 5",
+    phone: "тел: (812)385-50-80",
+    email: "e-mail: info@meddynasty.ru",
+    website: "www.meddynasty.ru",
+    footerLine1: "ИНН 7813615229, КПП 781301001, р/счет 40702810255000018946 в СЕВЕРО-ЗАПАДНЫЙ БАНК ОАО «СБЕРБАНК РОССИИ»,",
+    footerLine2: "к/счет 30101810500000000653, БИК 044030653, ОКПО 31580617, ОКАТО 40288000000, ОГРН 1187847192719",
+    templateFile: "Выездной шаблон бланка осмотра.docx",
+  },
+  clinic: {
+    name: "ООО «Академическая клиника «Династия»",
+    address: "Всеволожск, Октябрьский пр-т, 96а",
+    phone: "тел: (812)385-50-80",
+    email: "e-mail: info@meddynasty.ru",
+    website: "www.meddynasty.ru",
+    footerLine1: "ИНН 4703149160, КПП 470301001, р/счет 40702810555410002093 в СЕВЕРО-ЗАПАДНЫЙ БАНК ПАО СБЕРБАНК,",
+    footerLine2: "к/счет 30101810500000000653, БИК 044030653, ОКПО 13086523, ОКТМО 41612101001, ОГРН 1174704004090",
+    templateFile: "Шаблон бланка осмотра.docx",
+  },
 } as const
 
 // --- helpers ---
@@ -132,12 +158,23 @@ function sectionTitle(title: string, opts?: { size?: number; before?: number }):
 }
 
 // --- header table builder ---
-// Logo: original 499x135px. HTML uses height: 18mm ≈ 68px, width auto ≈ 251px
-// In docx, keep it modest: ~13mm height
-const LOGO_W = 185
-const LOGO_H = 50
+const LOGO_W = 340
+const LOGO_H = 92
 
-function buildHeaderTable(logoData: Buffer | null, clinicName: string): Table {
+/** Try to extract logo from the .docx template file */
+function extractLogoFromTemplate(templateFile: string): Buffer | null {
+  try {
+    const templatePath = join(process.cwd(), "templates/Denasty", templateFile)
+    if (!existsSync(templatePath)) return null
+    const content = readFileSync(templatePath)
+    const zip = new PizZip(content)
+    const imageFile = zip.file("word/media/image1.png")
+    if (imageFile) return Buffer.from(imageFile.asArrayBuffer())
+  } catch { /* template not found or no logo */ }
+  return null
+}
+
+function buildHeaderTable(logoData: Buffer | null, profile: typeof COMPANY_PROFILES[keyof typeof COMPANY_PROFILES]): Table {
   const logoCell = new TableCell({
     borders: NOBORDER,
     width: { size: 20, type: WidthType.PERCENTAGE },
@@ -150,11 +187,11 @@ function buildHeaderTable(logoData: Buffer | null, clinicName: string): Table {
   })
 
   const lines = [
-    { text: clinicName, bold: true, size: SZ_CO },
-    { text: "г. Санкт-Петербург, ул. Ленина д. 5", size: SZ_SM },
-    { text: "тел: (812)385-50-80", size: SZ_SM },
-    { text: "e-mail: info@meddynasty.ru", size: SZ_SM },
-    { text: "www.meddynasty.ru", size: SZ_SM },
+    { text: profile.name, bold: true, size: SZ_CO },
+    { text: profile.address, size: SZ_SM },
+    { text: profile.phone, size: SZ_SM },
+    { text: profile.email, size: SZ_SM },
+    { text: profile.website, size: SZ_SM },
   ]
 
   const infoCell = new TableCell({
@@ -181,12 +218,16 @@ function buildHeaderTable(logoData: Buffer | null, clinicName: string): Table {
 
 export async function generateDocx(input: GeneratorInput): Promise<Buffer> {
   const d = input.data
+  const visitType = input.visitType === "clinic" ? "clinic" : "home"
+  const profile = COMPANY_PROFILES[visitType]
 
-  // Read logo
-  let logoData: Buffer | null = null
-  try {
-    logoData = readFileSync(join(process.cwd(), "public/dynasty-logo.png"))
-  } catch { /* logo not found */ }
+  // Try to extract logo from the corresponding template, fallback to public/
+  let logoData = extractLogoFromTemplate(profile.templateFile)
+  if (!logoData) {
+    try {
+      logoData = readFileSync(join(process.cwd(), "public/dynasty-logo.png"))
+    } catch { /* logo not found */ }
+  }
 
   const p1: (Paragraph | Table)[] = []
   const p2: (Paragraph | Table)[] = []
@@ -479,12 +520,10 @@ export async function generateDocx(input: GeneratorInput): Promise<Buffer> {
   }))
 
   // --- FOOTER ---
-  const fl1 = "ИНН 7813615229, КПП 781301001, р/счет 40702810255000018946 в СЕВЕРО-ЗАПАДНЫЙ БАНК ОАО «СБЕРБАНК РОССИИ»,"
-  const fl2 = "к/счет 30101810500000000653, БИК 044030653, ОКПО 31580617, ОКАТО 40288000000, ОГРН 1187847192719"
   const mkFooter = () => new Footer({
     children: [
-      new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 0 }, children: [new TextRun({ text: fl1, font: FONT, size: SZ_FOOT })] }),
-      new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 0 }, children: [new TextRun({ text: fl2, font: FONT, size: SZ_FOOT })] }),
+      new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 0 }, children: [new TextRun({ text: profile.footerLine1, font: FONT, size: SZ_FOOT })] }),
+      new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 0 }, children: [new TextRun({ text: profile.footerLine2, font: FONT, size: SZ_FOOT })] }),
     ],
   })
 
@@ -496,12 +535,12 @@ export async function generateDocx(input: GeneratorInput): Promise<Buffer> {
       {
         properties: { page: { margin } },
         footers: { default: mkFooter() },
-        children: [buildHeaderTable(logoData, input.clinicName), ...p1],
+        children: [buildHeaderTable(logoData, profile), ...p1],
       },
       {
         properties: { page: { margin } },
         footers: { default: mkFooter() },
-        children: [buildHeaderTable(logoData, input.clinicName), ...p2],
+        children: [buildHeaderTable(logoData, profile), ...p2],
       },
     ],
   })

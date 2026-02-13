@@ -67,7 +67,7 @@ export function SidebarNav({ sections }: SidebarNavProps) {
   }
 
   return (
-    <aside className="sticky top-[88px] h-fit w-[220px] shrink-0 hidden lg:block">
+    <aside className="sticky top-[73px] h-fit w-[220px] shrink-0 hidden lg:block">
       <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest mb-3 px-3">
         Разделы
       </p>

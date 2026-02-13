@@ -37,6 +37,7 @@ export async function GET(
     doctorName: history.doctor.name,
     examinationDate: format(new Date(history.examinationDate), "dd.MM.yyyy", { locale: ru }),
     patientName: `${history.patient.lastName} ${history.patient.firstName} ${history.patient.middleName || ""}`.trim(),
+    visitType: history.visitType,
     data: history.data as Record<string, Record<string, unknown>>,
     sections: schema.sections,
   })

@@ -46,6 +46,7 @@ export async function PATCH(
     data: {
       ...(body.data !== undefined ? { data: body.data } : {}),
       ...(body.status !== undefined ? { status: body.status } : {}),
+      ...(body.visitType !== undefined ? { visitType: body.visitType } : {}),
     },
   })
 

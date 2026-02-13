@@ -1,10 +1,9 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState } from "react"
 import { Sparkles, Mic, Upload, Camera, ChevronDown, ChevronUp, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { useVoiceRecorder } from "@/lib/hooks/use-voice-recorder"
 
 interface AiFillBarProps {
   sections?: {
@@ -18,20 +17,15 @@ interface AiFillBarProps {
     }[]
   }[]
   onFill?: (data: Record<string, Record<string, unknown>>) => void
+  onVoiceSession?: () => void
+  voiceSessionLoading?: boolean
 }
 
-export function AiFillBar({ sections, onFill }: AiFillBarProps) {
+export function AiFillBar({ sections, onFill, onVoiceSession, voiceSessionLoading }: AiFillBarProps) {
   const [expanded, setExpanded] = useState(false)
   const [text, setText] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  const onTranscribed = useCallback((transcribedText: string) => {
-    setText((prev) => (prev ? prev + " " + transcribedText : transcribedText))
-    setExpanded(true)
-  }, [])
-
-  const { isRecording, isTranscribing, startRecording, stopRecording, error: voiceError } = useVoiceRecorder({ onTranscribed })
 
   async function handleFill() {
     if (!text.trim() || !sections || !onFill) return
@@ -75,20 +69,22 @@ export function AiFillBar({ sections, onFill }: AiFillBarProps) {
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0 flex-wrap">
-          <Button
-            variant="outline"
-            size="sm"
-            className={cn("gap-1.5 text-xs", isRecording && "border-red-500 text-red-500")}
-            onClick={isRecording ? stopRecording : startRecording}
-            disabled={isTranscribing}
-          >
-            {isTranscribing ? (
-              <Loader2 className="w-3 h-3 animate-spin" />
-            ) : (
-              <Mic className={cn("w-3 h-3", isRecording && "animate-pulse")} />
-            )}
-            {isRecording ? "Стоп" : isTranscribing ? "Распознаю..." : "Голос"}
-          </Button>
+          {onVoiceSession && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 text-xs"
+              onClick={onVoiceSession}
+              disabled={voiceSessionLoading}
+            >
+              {voiceSessionLoading ? (
+                <Loader2 className="w-3 h-3 animate-spin" />
+              ) : (
+                <Mic className="w-3 h-3" />
+              )}
+              {voiceSessionLoading ? "Создание..." : "Голосовая сессия"}
+            </Button>
+          )}
           <Button variant="outline" size="sm" className="gap-1.5 text-xs">
             <Upload className="w-3 h-3" /> Файлы
           </Button>
@@ -107,12 +103,6 @@ export function AiFillBar({ sections, onFill }: AiFillBarProps) {
         </div>
       </div>
 
-      {voiceError && !expanded && (
-        <div className="px-4 pb-3">
-          <p className="text-xs text-red-500">{voiceError}</p>
-        </div>
-      )}
-
       {expanded && (
         <div className="px-4 pb-4 space-y-3">
           <textarea
@@ -125,7 +115,7 @@ export function AiFillBar({ sections, onFill }: AiFillBarProps) {
             )}
             disabled={loading}
           />
-          {(error || voiceError) && <p className="text-xs text-red-500">{error || voiceError}</p>}
+          {error && <p className="text-xs text-red-500">{error}</p>}
           <div className="flex justify-end">
             <Button
               size="sm"
