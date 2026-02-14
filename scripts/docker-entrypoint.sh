@@ -7,5 +7,8 @@ npx prisma db push --skip-generate 2>&1 || echo "WARNING: prisma db push failed 
 echo "=== Running seed ==="
 node prisma/seed-prod.js 2>&1 || echo "WARNING: seed failed"
 
+echo "=== Syncing templates ==="
+node prisma/sync-templates.js 2>&1 || echo "WARNING: template sync failed"
+
 echo "=== Starting app ==="
 exec node server.js
