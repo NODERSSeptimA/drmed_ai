@@ -35,6 +35,9 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/templates ./templates
 COPY --from=builder /app/prisma/schema.prisma ./prisma/schema.prisma
 COPY --from=builder /app/prisma/seed-prod.js ./prisma/seed-prod.js
+COPY --from=builder /app/prisma/sync-templates.js ./prisma/sync-templates.js
+COPY --from=builder /app/prisma/sync-icd10.js ./prisma/sync-icd10.js
+COPY --from=builder /app/data ./data
 COPY --from=builder /app/package.json ./package.json
 
 # Install prisma CLI + bcryptjs for migrations and seed at startup
