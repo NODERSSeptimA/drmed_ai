@@ -5,7 +5,7 @@ import { TextField } from "./field-components/text-field"
 import { ProseField } from "./field-components/prose-field"
 import { DateField } from "./field-components/date-field"
 import { SelectField } from "./field-components/select-field"
-import { QuickFillField } from "./field-components/quick-fill-field"
+import { MultiSelectField } from "./field-components/multi-select-field"
 import { DiagnosisBlock } from "./diagnosis-block"
 import { ICD10Field } from "./field-components/icd10-field"
 import {
@@ -34,7 +34,6 @@ interface FieldDef {
   label: string
   type: string
   options?: unknown[]
-  multiSelect?: boolean
   subsections?: Array<{ id: string; label: string; type?: string }>
 }
 
@@ -101,15 +100,14 @@ export function SectionRenderer({ section, sectionIndex, data, editing, onFieldC
             onChange={(v) => onFieldChange(field.id, v)}
           />
         )
-      case "quick-fill":
+      case "multi-select":
         return (
-          <QuickFillField
+          <MultiSelectField
             key={field.id}
             label={field.label}
             value={(value as string) || ""}
             editing={editing}
             options={(field.options as string[]) || []}
-            multiSelect={field.multiSelect}
             onChange={(v) => onFieldChange(field.id, v)}
           />
         )

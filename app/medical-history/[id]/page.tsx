@@ -21,7 +21,6 @@ interface TemplateSection {
     label: string
     type: string
     options?: unknown[]
-    multiSelect?: boolean
     subsections?: Array<{ id: string; label: string; type?: string }>
   }>
 }

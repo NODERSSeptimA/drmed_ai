@@ -24,8 +24,8 @@ export async function POST(req: NextRequest) {
           let desc = `  - "${f.id}" (${f.type}): ${f.label}`
           if (f.type === "select" && f.options && f.options.length > 0) {
             desc += ` [строго один из вариантов: ${JSON.stringify(f.options)}]`
-          } else if (f.type === "quick-fill" && f.options && f.options.length > 0) {
-            desc += ` [типичные значения: ${(f.options as string[]).join(", ")}; можно использовать свободный текст]`
+          } else if (f.type === "multi-select" && f.options && f.options.length > 0) {
+            desc += ` [выбери подходящие из: ${JSON.stringify(f.options)}, через ", "]`
           }
           return desc
         })
