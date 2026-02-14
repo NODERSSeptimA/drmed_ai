@@ -5,7 +5,9 @@ import { TextField } from "./field-components/text-field"
 import { ProseField } from "./field-components/prose-field"
 import { DateField } from "./field-components/date-field"
 import { SelectField } from "./field-components/select-field"
+import { QuickFillField } from "./field-components/quick-fill-field"
 import { DiagnosisBlock } from "./diagnosis-block"
+import { ICD10Field } from "./field-components/icd10-field"
 import {
   User, ClipboardList, MessageCircle, History, Brain, Activity,
   TrendingUp, FileCheck, Stethoscope, TestTubes, Pill, CalendarCheck, Calendar
@@ -32,6 +34,7 @@ interface FieldDef {
   label: string
   type: string
   options?: unknown[]
+  multiSelect?: boolean
   subsections?: Array<{ id: string; label: string; type?: string }>
 }
 
@@ -54,6 +57,18 @@ export function SectionRenderer({ section, sectionIndex, data, editing, onFieldC
 
   function renderField(field: FieldDef): ReactNode {
     const value = data[field.id]
+
+    if (field.id === "icd_code") {
+      return (
+        <ICD10Field
+          key={field.id}
+          label={field.label}
+          value={(value as string) || ""}
+          editing={editing}
+          onChange={(v) => onFieldChange(field.id, v)}
+        />
+      )
+    }
 
     switch (field.type) {
       case "text":
@@ -83,6 +98,18 @@ export function SectionRenderer({ section, sectionIndex, data, editing, onFieldC
             label={field.label}
             value={(value as string) || ""}
             editing={editing}
+            onChange={(v) => onFieldChange(field.id, v)}
+          />
+        )
+      case "quick-fill":
+        return (
+          <QuickFillField
+            key={field.id}
+            label={field.label}
+            value={(value as string) || ""}
+            editing={editing}
+            options={(field.options as string[]) || []}
+            multiSelect={field.multiSelect}
             onChange={(v) => onFieldChange(field.id, v)}
           />
         )
@@ -276,13 +303,15 @@ export function SectionRenderer({ section, sectionIndex, data, editing, onFieldC
 
   // Diagnosis: special block
   if (section.id === "diagnosis") {
+    const icdRaw = (data.icd_code as string) || ""
+    const icdCode = icdRaw ? (icdRaw.startsWith("F") ? icdRaw : `F${icdRaw}`) : undefined
     return (
       <SectionWrapper id={section.id} icon={Icon} index={sectionIndex} title={section.title}>
         <div className="space-y-4">
           {editing ? (
             section.fields?.map(renderField)
           ) : (
-            <DiagnosisBlock variant="green" label="Диагноз" code={(data.icd_code as string) || undefined}>
+            <DiagnosisBlock variant="green" label="Диагноз" code={icdCode}>
               <p>{(data.diagnosis_text as string) || "—"}</p>
             </DiagnosisBlock>
           )}

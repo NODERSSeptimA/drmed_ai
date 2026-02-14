@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth"
 import { openai } from "@/lib/ai/openai"
 import { FILL_SECTIONS_SYSTEM_PROMPT } from "@/lib/ai/prompts"
 import type { FillSectionsRequest } from "@/lib/ai/types"
+import { prisma } from "@/lib/prisma"
 
 export async function POST(req: NextRequest) {
   const session = await auth()
@@ -21,8 +22,10 @@ export async function POST(req: NextRequest) {
       const fields = s.fields
         ?.map((f) => {
           let desc = `  - "${f.id}" (${f.type}): ${f.label}`
-          if (f.options && f.options.length > 0) {
-            desc += ` [варианты: ${JSON.stringify(f.options)}]`
+          if (f.type === "select" && f.options && f.options.length > 0) {
+            desc += ` [строго один из вариантов: ${JSON.stringify(f.options)}]`
+          } else if (f.type === "quick-fill" && f.options && f.options.length > 0) {
+            desc += ` [типичные значения: ${(f.options as string[]).join(", ")}; можно использовать свободный текст]`
           }
           return desc
         })
@@ -31,7 +34,32 @@ export async function POST(req: NextRequest) {
     })
     .join("\n\n")
 
-  const userPrompt = `Схема шаблона:\n${schemaDescription}\n\nТекст осмотра врача:\n${body.text}\n\nИзвлеки данные из текста и верни JSON-объект. Ключи верхнего уровня — id секций, значения — объекты с полями этой секции.`
+  // Search ICD-10 codes relevant to the text for AI context
+  const textWords = body.text
+    .replace(/[^\p{L}\s]/gu, " ")
+    .split(/\s+/)
+    .filter((w) => w.length > 4)
+    .slice(0, 10)
+
+  let icd10Context = ""
+  if (textWords.length > 0) {
+    const icd10Codes = await prisma.icd10.findMany({
+      where: {
+        OR: textWords.map((word) => ({
+          name: { contains: word, mode: "insensitive" as const },
+        })),
+      },
+      orderBy: { code: "asc" },
+      take: 15,
+    })
+    if (icd10Codes.length > 0) {
+      icd10Context = `\n\nСправочник МКБ-10 (релевантные коды):\n${icd10Codes
+        .map((c: { code: string; name: string }) => `${c.code} — ${c.name}`)
+        .join("\n")}\n\nДля поля icd_code используй один из этих кодов БЕЗ буквы "F".`
+    }
+  }
+
+  const userPrompt = `Схема шаблона:\n${schemaDescription}\n\nТекст осмотра врача:\n${body.text}${icd10Context}\n\nИзвлеки данные из текста и верни JSON-объект. Ключи верхнего уровня — id секций, значения — объекты с полями этой секции.`
 
   const response = await openai.chat.completions.create({
     model: "gpt-4o-mini",

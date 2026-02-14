@@ -214,6 +214,16 @@ async function main() {
   });
   console.log("Created medical history:", medicalHistory.id);
 
+  // --- ICD-10 Chapter F codes ---
+  const icd10Data = JSON.parse(
+    readFileSync(join(process.cwd(), "data/icd10-f.json"), "utf-8")
+  );
+  const icd10Result = await prisma.icd10.createMany({
+    data: icd10Data,
+    skipDuplicates: true,
+  });
+  console.log("Loaded ICD-10 codes:", icd10Result.count);
+
   console.log("Seeding complete!");
 }
 

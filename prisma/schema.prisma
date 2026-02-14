@@ -98,3 +98,12 @@ model VoiceSession {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
+
+model Icd10 {
+  code       String  @id          // "F32.0" — натуральный ключ
+  name       String               // "Депрессивный эпизод лёгкой степени"
+  parentCode String?              // "F32"
+  chapter    String               // "F"
+
+  @@index([chapter])
+}
