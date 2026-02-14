@@ -63,7 +63,10 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
-            DEPLOY_DIR="${{ secrets.DEPLOY_PATH || '/opt/medai' }}"
+            DEPLOY_DIR="${{ secrets.DEPLOY_PATH }}"
+            if [ -z "$DEPLOY_DIR" ]; then
+              DEPLOY_DIR="$HOME/drmed_ai"
+            fi
             sudo mkdir -p "$DEPLOY_DIR"/nginx
             sudo chown -R $USER:$USER "$DEPLOY_DIR"
             cat > "$DEPLOY_DIR"/.env << ENVEOF
@@ -84,7 +87,10 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
-            DEPLOY_DIR="${{ secrets.DEPLOY_PATH || '/opt/medai' }}"
+            DEPLOY_DIR="${{ secrets.DEPLOY_PATH }}"
+            if [ -z "$DEPLOY_DIR" ]; then
+              DEPLOY_DIR="$HOME/drmed_ai"
+            fi
             cd "$DEPLOY_DIR"
 
             # Update config files from git
