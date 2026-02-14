@@ -110,6 +110,13 @@ jobs:
             echo "=== Image digest ==="
             sudo docker inspect --format='{{index .RepoDigests 0}}' ghcr.io/nodersseptima/drmed_ai:latest || true
 
+            # Clean up old images, build cache and stopped containers before deploying
+            echo "=== Cleaning up Docker ==="
+            sudo docker system prune -a -f --filter "until=24h"
+            sudo docker builder prune -a -f || true
+            echo "=== Disk usage after cleanup ==="
+            df -h / | tail -1
+
             # Stop old containers, recreate with new image
             echo "=== Recreating containers ==="
             sudo docker compose --env-file .env up -d --force-recreate --pull always
