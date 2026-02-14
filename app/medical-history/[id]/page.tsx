@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { ru } from "date-fns/locale"
-import { FileText, Building2, Calendar, MapPin, Pencil, Printer, Download, Save, X, ArrowLeft, Car } from "lucide-react"
+import { FileText, Building2, Calendar, MapPin, Pencil, Printer, Download, Save, X, ArrowLeft, Car, Trash2, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { SidebarNav } from "@/components/medical-history/sidebar-nav"
@@ -21,6 +21,7 @@ interface TemplateSection {
     label: string
     type: string
     options?: unknown[]
+    multiSelect?: boolean
     subsections?: Array<{ id: string; label: string; type?: string }>
   }>
 }
@@ -51,6 +52,8 @@ export default function MedicalHistoryPage() {
   const [formData, setFormData] = useState<Record<string, Record<string, unknown>>>({})
   const [saving, setSaving] = useState(false)
   const [creatingVoiceSession, setCreatingVoiceSession] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const saveTimeout = useRef<NodeJS.Timeout | null>(null)
 
   const loadHistory = useCallback(async () => {
@@ -138,6 +141,16 @@ export default function MedicalHistoryPage() {
     }
   }
 
+  async function handleDelete() {
+    if (!history) return
+    setDeleting(true)
+    const res = await fetch(`/api/medical-history/${history.id}`, { method: "DELETE" })
+    if (res.ok) {
+      router.push("/")
+    }
+    setDeleting(false)
+  }
+
   if (!history) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -203,6 +216,22 @@ export default function MedicalHistoryPage() {
                 <Button size="sm" className="gap-1.5" onClick={handleExport}>
                   <Download className="w-4 h-4" /> <span className="hidden sm:inline">Экспорт в Word</span>
                 </Button>
+                {confirmDelete ? (
+                  <div className="flex items-center gap-1.5 ml-1">
+                    <Button variant="destructive" size="sm" className="gap-1.5" onClick={handleDelete} disabled={deleting}>
+                      {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                      <span className="hidden sm:inline">Удалить</span>
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => setConfirmDelete(false)}>
+                      <span className="hidden sm:inline">Отмена</span>
+                      <X className="w-4 h-4 sm:hidden" />
+                    </Button>
+                  </div>
+                ) : (
+                  <Button variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-destructive" onClick={() => setConfirmDelete(true)}>
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                )}
               </>
             )}
           </div>

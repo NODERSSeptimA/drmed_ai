@@ -63,6 +63,7 @@ export async function DELETE(
   }
 
   const { id } = await params
+  await prisma.voiceSession.deleteMany({ where: { medicalHistoryId: id } })
   await prisma.medicalHistory.delete({ where: { id } })
 
   return NextResponse.json({ success: true })

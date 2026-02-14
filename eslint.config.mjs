@@ -18,6 +18,7 @@ const eslintConfig = defineConfig([
     // CommonJS production scripts
     "prisma/seed-prod.js",
     "prisma/sync-templates.js",
+    "prisma/sync-icd10.js",
   ]),
 ]);
 

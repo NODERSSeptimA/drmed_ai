@@ -2,7 +2,7 @@
 
 import { format } from "date-fns"
 import { useState } from "react"
-import { Phone, Mail, MapPin, ShieldCheck, Heart, Activity, Thermometer, Droplets, Pill, FileText, Sparkles, Upload, Pencil, Loader2, Plus, Building2, Car } from "lucide-react"
+import { Phone, Mail, MapPin, ShieldCheck, Heart, Activity, Thermometer, Droplets, Pill, FileText, Sparkles, Upload, Pencil, Loader2, Plus, Building2, Car, Trash2 } from "lucide-react"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -49,6 +49,8 @@ export function PatientCardModal({ patient, open, onOpenChange }: PatientCardMod
   const router = useRouter()
   const [creatingHistory, setCreatingHistory] = useState(false)
   const [showVisitTypeChoice, setShowVisitTypeChoice] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
   async function handleCreateHistory(visitType: "clinic" | "home") {
     if (!patient || creatingHistory) return
@@ -72,6 +74,20 @@ export function PatientCardModal({ patient, open, onOpenChange }: PatientCardMod
       }
     } finally {
       setCreatingHistory(false)
+    }
+  }
+
+  async function handleDeleteHistory(historyId: string) {
+    setDeletingId(historyId)
+    try {
+      const res = await fetch(`/api/medical-history/${historyId}`, { method: "DELETE" })
+      if (res.ok && patient) {
+        patient.medicalHistories = patient.medicalHistories?.filter((h) => h.id !== historyId)
+        setConfirmDeleteId(null)
+        router.refresh()
+      }
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -265,20 +281,56 @@ export function PatientCardModal({ patient, open, onOpenChange }: PatientCardMod
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">История визитов</p>
             <div className="space-y-2">
               {(patient.medicalHistories || []).map((history) => (
-                <div key={history.id} className="flex items-center gap-3 p-3 border border-border rounded-xl">
-                  <span className="text-xs font-mono text-muted-foreground shrink-0">
-                    {format(new Date(history.examinationDate), "dd.MM.yyyy")}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{history.template?.title || "Осмотр"}</p>
-                    <p className="text-xs text-muted-foreground truncate">{history.doctor?.name || ""}</p>
-                  </div>
-                  <Badge variant="outline" className={cn(
-                    "text-xs shrink-0",
-                    history.status === "completed" ? "border-medgreen/30 text-medgreen bg-medgreen/5" : "border-warm/30 text-warm bg-warm-bg"
-                  )}>
-                    {history.status === "completed" ? "Завершён" : "В процессе"}
-                  </Badge>
+                <div key={history.id} className="flex items-center gap-3 p-3 border border-border rounded-xl group">
+                  <Link
+                    href={`/medical-history/${history.id}`}
+                    onClick={() => onOpenChange(false)}
+                    className="flex items-center gap-3 flex-1 min-w-0 hover:opacity-70 transition-opacity"
+                  >
+                    <span className="text-xs font-mono text-muted-foreground shrink-0">
+                      {format(new Date(history.examinationDate), "dd.MM.yyyy")}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{history.template?.title || "Осмотр"}</p>
+                      <p className="text-xs text-muted-foreground truncate">{history.doctor?.name || ""}</p>
+                    </div>
+                    <Badge variant="outline" className={cn(
+                      "text-xs shrink-0",
+                      history.status === "completed" ? "border-medgreen/30 text-medgreen bg-medgreen/5" : "border-warm/30 text-warm bg-warm-bg"
+                    )}>
+                      {history.status === "completed" ? "Завершён" : "Черновик"}
+                    </Badge>
+                  </Link>
+                  {confirmDeleteId === history.id ? (
+                    <div className="flex items-center gap-1 shrink-0">
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="h-7 text-xs px-2"
+                        disabled={deletingId === history.id}
+                        onClick={() => handleDeleteHistory(history.id)}
+                      >
+                        {deletingId === history.id ? <Loader2 className="w-3 h-3 animate-spin" /> : "Да"}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 text-xs px-2"
+                        onClick={() => setConfirmDeleteId(null)}
+                      >
+                        Нет
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                      onClick={() => setConfirmDeleteId(history.id)}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </Button>
+                  )}
                 </div>
               ))}
               {(!patient.medicalHistories || patient.medicalHistories.length === 0) && (
