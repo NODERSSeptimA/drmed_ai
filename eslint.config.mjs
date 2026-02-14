@@ -15,8 +15,9 @@ const eslintConfig = defineConfig([
     // Old HTML prototype
     "web/**",
     "nextjs-app/**",
-    // CommonJS production seed script
+    // CommonJS production scripts
     "prisma/seed-prod.js",
+    "prisma/sync-templates.js",
   ]),
 ]);
 
