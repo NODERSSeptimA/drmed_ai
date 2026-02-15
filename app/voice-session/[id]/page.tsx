@@ -24,7 +24,7 @@ interface TemplateSection {
   id: string
   title: string
   icon?: string
-  fields?: { id: string; label: string; type: string; options?: unknown[] }[]
+  fields?: { id: string; label: string; type: string; options?: unknown[]; aiPrompt?: string; followUpPrompts?: string[] }[]
 }
 
 interface VoiceSessionData {
@@ -33,6 +33,7 @@ interface VoiceSessionData {
   medicalHistoryId: string
   medicalHistory: {
     id: string
+    data: Record<string, Record<string, unknown>>
     patient: { firstName: string; lastName: string; middleName?: string | null; birthDate: string }
     template: {
       title: string
@@ -71,13 +72,16 @@ export default function VoiceSessionPage() {
 
   const sections: TemplateSection[] = sessionData?.medicalHistory.template.schema.sections || []
 
-  // Build initial data from patient card (ФИО + дата рождения)
-  const patientInitialData = sessionData ? (() => {
+  // Build initial data: merge patient info + already filled medical history data
+  const combinedInitialData = sessionData ? (() => {
     const p = sessionData.medicalHistory.patient
     const fullName = [p.lastName, p.firstName, p.middleName].filter(Boolean).join(" ")
     const birthDate = p.birthDate ? p.birthDate.split("T")[0] : ""
+    const existingData = sessionData.medicalHistory.data || {}
     return {
+      ...existingData,
       patient_info: {
+        ...existingData.patient_info,
         full_name: fullName,
         birth_date: birthDate,
       },
@@ -95,9 +99,11 @@ export default function VoiceSessionPage() {
         label: f.label,
         type: f.type,
         options: f.options,
+        aiPrompt: f.aiPrompt,
+        followUpPrompts: f.followUpPrompts,
       })),
     })),
-    initialData: patientInitialData,
+    initialData: combinedInitialData,
   })
 
   // Auto-scroll dialog

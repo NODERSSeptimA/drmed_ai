@@ -35,6 +35,7 @@ interface FieldDef {
   type: string
   options?: unknown[]
   subsections?: Array<{ id: string; label: string; type?: string }>
+  dependsOn?: { field: string; contains: string }
 }
 
 interface SectionRendererProps {
@@ -54,7 +55,14 @@ interface SectionRendererProps {
 export function SectionRenderer({ section, sectionIndex, data, editing, onFieldChange }: SectionRendererProps) {
   const Icon = iconMap[section.icon] || User
 
+  function isFieldVisible(field: FieldDef): boolean {
+    if (!field.dependsOn) return true
+    const parentValue = (data[field.dependsOn.field] as string) || ""
+    return parentValue.includes(field.dependsOn.contains)
+  }
+
   function renderField(field: FieldDef): ReactNode {
+    if (!isFieldVisible(field)) return null
     const value = data[field.id]
 
     if (field.id === "icd_code") {
@@ -137,6 +145,7 @@ export function SectionRenderer({ section, sectionIndex, data, editing, onFieldC
 
   /** Inline field: label + value on one line (view mode), or label above input (edit mode) */
   function renderInlineField(field: FieldDef): ReactNode {
+    if (!isFieldVisible(field)) return null
     const value = (data[field.id] as string) || ""
     if (editing) {
       return renderField(field)
@@ -247,26 +256,32 @@ export function SectionRenderer({ section, sectionIndex, data, editing, onFieldC
             <div className="pt-2" />
 
             {/* Эмоциональные нарушения */}
-            {f("emotional_disorders") && renderInlineField(f("emotional_disorders")!)}
+            {f("emotional_mood") && renderInlineField(f("emotional_mood")!)}
+            {f("emotional_reactivity") && renderInlineField(f("emotional_reactivity")!)}
+            {f("emotional_depth") && renderInlineField(f("emotional_depth")!)}
             {/* Память + интеллект */}
             {f("memory_disorders") && f("intellect_disorders") && renderPairedFields(f("memory_disorders")!, f("intellect_disorders")!)}
             {/* Мышление */}
-            {f("thinking_disorders") && renderInlineField(f("thinking_disorders")!)}
+            {f("thinking_tempo") && renderInlineField(f("thinking_tempo")!)}
+            {f("thinking_form") && renderInlineField(f("thinking_form")!)}
+            {f("thinking_content") && renderInlineField(f("thinking_content")!)}
 
             {/* Нарушения ощущений — sub-header */}
             <div className="pt-3">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Нарушения ощущений</p>
-              {f("sensation_quantitative") && renderInlineField(f("sensation_quantitative")!)}
-              {f("sensation_qualitative") && renderInlineField(f("sensation_qualitative")!)}
+              {f("sensation_disorders") && renderInlineField(f("sensation_disorders")!)}
             </div>
 
             {/* Нарушения восприятия */}
             {f("perception_disorders") && renderInlineField(f("perception_disorders")!)}
+            {f("auditory_hallucinations_type") && renderInlineField(f("auditory_hallucinations_type")!)}
+            {f("verbal_hallucinations_type") && renderInlineField(f("verbal_hallucinations_type")!)}
 
             {/* Separator */}
             <div className="pt-3">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Двигательно-волевая сфера</p>
               {f("motor_volitional") && renderInlineField(f("motor_volitional")!)}
+              {f("catatonic_symptoms_type") && renderInlineField(f("catatonic_symptoms_type")!)}
               {f("suicidal_intentions") && renderInlineField(f("suicidal_intentions")!)}
               {f("self_assessment") && renderInlineField(f("self_assessment")!)}
             </div>

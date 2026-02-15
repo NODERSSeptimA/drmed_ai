@@ -47,7 +47,7 @@ export interface RealtimeSessionRequest {
   templateSections: {
     id: string
     title: string
-    fields?: { id: string; label: string; type: string; options?: unknown[] }[]
+    fields?: { id: string; label: string; type: string; options?: unknown[]; aiPrompt?: string; followUpPrompts?: string[] }[]
   }[]
   initialData?: Record<string, Record<string, unknown>>
 }

@@ -15,7 +15,7 @@ export type VoiceSessionPhase =
 interface TemplateSection {
   id: string
   title: string
-  fields?: { id: string; label: string; type: string; options?: unknown[] }[]
+  fields?: { id: string; label: string; type: string; options?: unknown[]; aiPrompt?: string; followUpPrompts?: string[] }[]
 }
 
 interface UseVoiceSessionOptions {
