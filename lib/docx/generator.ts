@@ -157,6 +157,35 @@ function sectionTitle(title: string, opts?: { size?: number; before?: number }):
   })
 }
 
+/** Compose text from individual template fields in a section */
+function composeSectionText(
+  sectionData: Record<string, unknown>,
+  fields: Array<{ id: string; label: string; type: string }>,
+  options?: { skipValues?: string[]; separator?: string }
+): string {
+  const skipValues = options?.skipValues || []
+  const separator = options?.separator || ". "
+  const parts: string[] = []
+
+  for (const field of fields) {
+    const raw = sectionData[field.id]
+    if (!raw) continue
+    let val = String(raw)
+
+    // Parse multi-select JSON arrays
+    if (field.type === "multi-select") {
+      try {
+        const arr = JSON.parse(val)
+        if (Array.isArray(arr)) val = arr.join(", ")
+      } catch { /* legacy comma format is fine */ }
+    }
+
+    if (!val || skipValues.includes(val)) continue
+    parts.push(`${field.label}: ${val}`)
+  }
+  return parts.join(separator)
+}
+
 // --- header table builder ---
 const LOGO_W = 340
 const LOGO_H = 92
@@ -326,13 +355,24 @@ export async function generateDocx(input: GeneratorInput): Promise<Buffer> {
   if (!obsVal) p1.push(blankULine())
 
   // Эмоциональные нарушения
-  p1.push(fieldLine("Эмоциональные нарушения:", String(ms.emotional_disorders || "")))
+  const emotionalParts = [
+    ms.emotional_mood && String(ms.emotional_mood),
+    ms.emotional_reactivity && String(ms.emotional_reactivity),
+    ms.emotional_depth && String(ms.emotional_depth),
+  ].filter(Boolean)
+  const emotionalVal = String(ms.emotional_disorders || "") || emotionalParts.join(", ")
+  p1.push(fieldLine("Эмоциональные нарушения:", emotionalVal))
 
   // Память + интеллект
   p1.push(fieldLine2("Нарушение памяти", String(ms.memory_disorders || ""), "нарушения интеллекта", String(ms.intellect_disorders || "")))
 
   // Нарушения мышления
-  const thinkVal = String(ms.thinking_disorders || "")
+  const thinkParts = [
+    ms.thinking_tempo && `темп: ${ms.thinking_tempo}`,
+    ms.thinking_form && `форма: ${ms.thinking_form}`,
+    ms.thinking_content && `содержание: ${ms.thinking_content}`,
+  ].filter(Boolean)
+  const thinkVal = String(ms.thinking_disorders || "") || thinkParts.join("; ")
   p1.push(textLine("Нарушения мышления (навязчивые; сверхценные; бредовые идеи и их содержание):"))
   if (thinkVal) {
     p1.push(new Paragraph({ spacing: { after: 20 }, children: [t(thinkVal)] }))
@@ -344,7 +384,13 @@ export async function generateDocx(input: GeneratorInput): Promise<Buffer> {
 
   // Нарушения ощущений
   p1.push(textLine("Нарушения ощущений:", { before: 20 }))
-  p1.push(fieldLine("- количественные (анестезия, гипо-, гиперстезия)", String(ms.sensation_quantitative || "")))
+  let sensationVal = String(ms.sensation_disorders || "")
+  try {
+    const arr = JSON.parse(sensationVal)
+    if (Array.isArray(arr)) sensationVal = arr.join(", ")
+  } catch { /* legacy format */ }
+  const sensQuantitative = String(ms.sensation_quantitative || "") || sensationVal
+  p1.push(fieldLine("- количественные (анестезия, гипо-, гиперстезия)", sensQuantitative))
   p1.push(fieldLine("- качественные (синестезия, парестезия)", String(ms.sensation_qualitative || "")))
 
   // Нарушения восприятия
@@ -367,7 +413,11 @@ export async function generateDocx(input: GeneratorInput): Promise<Buffer> {
 
   // Сомато-неврологический статус
   const som = d.somatic_neurological || {}
-  const somVal = String(som.somatic_neuro_text || "")
+  const somSection = input.sections.find((s) => s.id === "somatic_neurological")
+  const somVal = String(som.somatic_neuro_text || "") || composeSectionText(
+    som as Record<string, unknown>,
+    (somSection?.fields || []) as Array<{ id: string; label: string; type: string }>
+  )
   p2.push(textLine("Сомато-неврологический статус:", { bold: true, before: 100 }))
   if (somVal) {
     p2.push(new Paragraph({ spacing: { after: 20 }, children: [t(somVal)] }))
@@ -380,7 +430,12 @@ export async function generateDocx(input: GeneratorInput): Promise<Buffer> {
 
   // Динамика
   const dyn = d.dynamics || {}
-  const dynVal = String(dyn.dynamics_text || "")
+  const dynSection = input.sections.find((s) => s.id === "dynamics")
+  const dynVal = String(dyn.dynamics_text || "") || composeSectionText(
+    dyn as Record<string, unknown>,
+    (dynSection?.fields || []) as Array<{ id: string; label: string; type: string }>,
+    { skipValues: ["Нет", ""] }
+  )
   p2.push(textLine("Динамика состояния за время наблюдения:", { before: 80 }))
   if (dynVal) {
     p2.push(new Paragraph({ spacing: { after: 20 }, children: [t(dynVal)] }))
@@ -397,12 +452,12 @@ export async function generateDocx(input: GeneratorInput): Promise<Buffer> {
     spacing: { before: 80, after: 20 },
     children: [
       t("Заключение: ", { bold: true }),
-      t("выявленные особенности психического статуса "),
-      t(conFeatures || "______", { underline: true }),
-      t(" указывают на наличие психического расстройства. В клинической картине отмечаются следующие симптомы:"),
+      t("выявленные особенности психического статуса указывают на наличие психического расстройства. В клинической картине отмечаются следующие симптомы:"),
     ],
   }))
-  if (!conFeatures) {
+  if (conFeatures) {
+    p2.push(new Paragraph({ spacing: { after: 20 }, children: [t(conFeatures)] }))
+  } else {
     p2.push(blankULine())
     p2.push(blankULine())
   }
@@ -413,17 +468,31 @@ export async function generateDocx(input: GeneratorInput): Promise<Buffer> {
   p2.push(new Paragraph({
     spacing: { before: 60, after: 20 },
     children: [
-      t("Уровень нарушений: ", { bold: true }),
-      t(disLevel || "___", { underline: true }),
-      t(" психотический / дефицитарный. Исходя из данных истории болезни, анамнеза и состояния пациента, тип реагирования определяется как: "),
-      t(reactType || "эндогенный / экзогенно-органический / психогенный / смешанный"),
+      t("Уровень нарушений: "),
+      ...(disLevel
+        ? [t(disLevel, { underline: true })]
+        : [t("\t\t\t\t", { underline: true })]
+      ),
+      t(". Исходя из данных истории болезни, анамнеза и состояния пациента, тип реагирования определяется как: "),
+      ...(reactType
+        ? [t(reactType, { underline: true })]
+        : [t("\t\t\t\t", { underline: true })]
+      ),
     ],
   }))
-  if (!disLevel) p2.push(blankULine())
 
   // Диагноз
   const diag = d.diagnosis || {}
-  const diagVal = String(diag.diagnosis_text || "")
+  let diagVal = String(diag.diagnosis_text || "")
+  if (!diagVal) {
+    // Fallback: look for any non-icd prose value in diagnosis section
+    for (const [key, val] of Object.entries(diag)) {
+      if (key !== "icd_code" && typeof val === "string" && val.length > 3) {
+        diagVal = val
+        break
+      }
+    }
+  }
   p2.push(sectionTitle("Диагноз:", { before: 80 }))
   if (diagVal) {
     p2.push(new Paragraph({ spacing: { after: 20 }, children: [t(diagVal)] }))

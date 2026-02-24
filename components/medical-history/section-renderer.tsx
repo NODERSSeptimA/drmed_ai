@@ -314,10 +314,10 @@ export function SectionRenderer({ section, sectionIndex, data, editing, onFieldC
       <SectionWrapper id={section.id} icon={Icon} index={sectionIndex} title={section.title}>
         <div className="space-y-4">
           {section.fields?.filter((f) => f.id === "conclusion_features").map(renderField)}
-          <DiagnosisBlock variant="yellow" label="Уровень нарушений">
+          <DiagnosisBlock variant="yellow" label="◆ Уровень нарушений">
             <p>
               <strong>{(data.disorder_level as string) || "—"}</strong>
-              {" "}психотический / дефицитарный. Тип реагирования:{" "}
+              {". Тип реагирования: "}
               <strong>{(data.reaction_type as string) || "—"}</strong>
             </p>
           </DiagnosisBlock>
