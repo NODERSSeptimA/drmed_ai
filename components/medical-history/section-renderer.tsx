@@ -8,6 +8,7 @@ import { SelectField } from "./field-components/select-field"
 import { MultiSelectField } from "./field-components/multi-select-field"
 import { DiagnosisBlock } from "./diagnosis-block"
 import { ICD10Field } from "./field-components/icd10-field"
+import { BloodPressureField } from "./field-components/blood-pressure-field"
 import {
   User, ClipboardList, MessageCircle, History, Brain, Activity,
   TrendingUp, FileCheck, Stethoscope, TestTubes, Pill, CalendarCheck, Calendar
@@ -127,6 +128,16 @@ export function SectionRenderer({ section, sectionIndex, data, editing, onFieldC
             value={(value as string) || ""}
             editing={editing}
             options={(field.options as Array<{ value: string; label: string }>) || []}
+            onChange={(v) => onFieldChange(field.id, v)}
+          />
+        )
+      case "blood-pressure":
+        return (
+          <BloodPressureField
+            key={field.id}
+            label={field.label}
+            value={(value as string) || ""}
+            editing={editing}
             onChange={(v) => onFieldChange(field.id, v)}
           />
         )
