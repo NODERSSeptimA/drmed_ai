@@ -5,6 +5,37 @@ import { Button } from "@/components/ui/button"
 import { ChevronsUpDown, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 
+function parseMultiSelectValue(value: string, options: string[]): string[] {
+  if (!value) return []
+  try {
+    const parsed = JSON.parse(value)
+    if (Array.isArray(parsed)) return parsed
+  } catch { /* not JSON — legacy comma-separated format */ }
+  // Legacy: try to match known options greedily
+  const result: string[] = []
+  let remaining = value
+  while (remaining.length > 0) {
+    remaining = remaining.replace(/^[\s,]+/, "")
+    if (!remaining) break
+    const match = options
+      .filter((o) => remaining.toLowerCase().startsWith(o.toLowerCase()))
+      .sort((a, b) => b.length - a.length)[0]
+    if (match) {
+      result.push(match)
+      remaining = remaining.slice(match.length)
+    } else {
+      const idx = remaining.indexOf(",")
+      if (idx === -1) {
+        result.push(remaining.trim())
+        break
+      }
+      result.push(remaining.slice(0, idx).trim())
+      remaining = remaining.slice(idx + 1)
+    }
+  }
+  return result.filter(Boolean)
+}
+
 interface MultiSelectFieldProps {
   label: string
   value: string
@@ -17,10 +48,7 @@ export function MultiSelectField({ label, value, editing, options, onChange }: M
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
-  const selectedItems = value
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean)
+  const selectedItems = parseMultiSelectValue(value, options)
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -39,9 +67,9 @@ export function MultiSelectField({ label, value, editing, options, onChange }: M
   function toggle(option: string) {
     if (isActive(option)) {
       const next = selectedItems.filter((item) => item.toLowerCase() !== option.toLowerCase())
-      onChange(next.join(", "))
+      onChange(JSON.stringify(next))
     } else {
-      onChange([...selectedItems, option].join(", "))
+      onChange(JSON.stringify([...selectedItems, option]))
     }
   }
 
@@ -49,7 +77,7 @@ export function MultiSelectField({ label, value, editing, options, onChange }: M
     return (
       <div className="flex flex-col gap-0.5">
         <span className="text-xs text-muted-foreground">{label}</span>
-        <span className="text-sm">{value || "—"}</span>
+        <span className="text-sm">{parseMultiSelectValue(value, options).join(", ") || "—"}</span>
       </div>
     )
   }
