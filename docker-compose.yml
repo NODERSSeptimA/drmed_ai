@@ -2,8 +2,8 @@ services:
   app:
     image: ghcr.io/nodersseptima/drmed_ai:latest
     restart: unless-stopped
-    expose:
-      - "3000"
+    ports:
+      - "3001:3000"
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
@@ -12,25 +12,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-
-  nginx:
-    image: nginx:alpine
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - certbot-www:/var/www/certbot:ro
-      - certbot-certs:/etc/letsencrypt:ro
-    depends_on:
-      - app
-
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - certbot-www:/var/www/certbot
-      - certbot-certs:/etc/letsencrypt
 
   postgres:
     image: postgres:16-alpine
@@ -51,5 +32,3 @@ services:
 
 volumes:
   pgdata:
-  certbot-www:
-  certbot-certs:
