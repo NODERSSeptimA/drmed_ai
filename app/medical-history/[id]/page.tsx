@@ -16,6 +16,7 @@ interface TemplateSection {
   id: string
   title: string
   icon: string
+  onlyForRepeated?: boolean
   fields?: Array<{
     id: string
     label: string
@@ -31,6 +32,7 @@ interface MedicalHistoryResponse {
   status: string
   visitType: string
   examinationDate: string
+  isRepeatVisit?: boolean
   patient: {
     firstName: string
     lastName: string
@@ -281,6 +283,7 @@ export default function MedicalHistoryPage() {
                 data={formData[section.id] || {}}
                 editing={editing}
                 onFieldChange={(fieldId, value) => handleFieldChange(section.id, fieldId, value)}
+                isRepeatVisit={history.isRepeatVisit}
               />
             ))}
           </div>

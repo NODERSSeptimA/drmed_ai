@@ -46,14 +46,20 @@ interface SectionRendererProps {
     icon: string
     description?: string
     fields?: FieldDef[]
+    onlyForRepeated?: boolean
   }
   sectionIndex: number
   data: Record<string, unknown>
   editing: boolean
   onFieldChange: (fieldId: string, value: unknown) => void
+  isRepeatVisit?: boolean
 }
 
-export function SectionRenderer({ section, sectionIndex, data, editing, onFieldChange }: SectionRendererProps) {
+export function SectionRenderer({ section, sectionIndex, data, editing, onFieldChange, isRepeatVisit }: SectionRendererProps) {
+  if (section.onlyForRepeated && !isRepeatVisit) {
+    return null
+  }
+
   const Icon = iconMap[section.icon] || User
 
   function isFieldVisible(field: FieldDef): boolean {

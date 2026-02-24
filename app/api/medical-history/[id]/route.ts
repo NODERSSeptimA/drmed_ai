@@ -26,7 +26,15 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 })
   }
 
-  return NextResponse.json(history)
+  const priorCount = await prisma.medicalHistory.count({
+    where: {
+      patientId: history.patientId,
+      id: { not: history.id },
+      status: "completed",
+    },
+  })
+
+  return NextResponse.json({ ...history, isRepeatVisit: priorCount > 0 })
 }
 
 export async function PATCH(
