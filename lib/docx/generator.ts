@@ -6,11 +6,6 @@ import {
   AlignmentType,
   Packer,
   Footer,
-  Table,
-  TableRow,
-  TableCell,
-  WidthType,
-  BorderStyle,
   TabStopType,
 } from "docx"
 import { readFileSync, existsSync } from "fs"
@@ -45,7 +40,8 @@ interface GeneratorInput {
   }>
 }
 
-const FONT = "Arial"
+const FONT = "Calibri"
+const FONT_HEADING = "Cambria"
 const SZ = 22        // 11pt — base text
 const SZ_SM = 18     // 9pt — header details
 const SZ_TITLE = 28  // 14pt — document title
@@ -56,13 +52,6 @@ const SZ_CO = 20     // 10pt — company name
 // A4 width 11906 twips, margins left=1134 right=850 → usable 9922
 const RIGHT_TAB = 9922
 const MID_TAB = 4800
-
-const NOBORDER = {
-  top: { style: BorderStyle.NONE, size: 0 },
-  bottom: { style: BorderStyle.NONE, size: 0 },
-  left: { style: BorderStyle.NONE, size: 0 },
-  right: { style: BorderStyle.NONE, size: 0 },
-} as const
 
 // Company profiles per visit type
 const COMPANY_PROFILES = {
@@ -90,10 +79,10 @@ const COMPANY_PROFILES = {
 
 // --- helpers ---
 
-function t(s: string, opts?: Partial<{ bold: boolean; underline: boolean; size: number; italic: boolean }>): TextRun {
+function t(s: string, opts?: Partial<{ bold: boolean; underline: boolean; size: number; italic: boolean; font: string }>): TextRun {
   return new TextRun({
     text: s,
-    font: FONT,
+    font: opts?.font ?? FONT,
     size: opts?.size ?? SZ,
     bold: opts?.bold,
     underline: opts?.underline ? {} : undefined,
@@ -145,14 +134,13 @@ function textLine(s: string, opts?: { bold?: boolean; size?: number; before?: nu
 function blankULine(): Paragraph {
   return new Paragraph({
     spacing: { after: 40 },
-    border: { bottom: { style: BorderStyle.SINGLE, size: 1, space: 1, color: "000000" } },
     children: [t(" ")],
   })
 }
 
 function sectionTitle(title: string, opts?: { size?: number; before?: number }): Paragraph {
   return new Paragraph({
-    children: [t(title, { bold: true, size: opts?.size })],
+    children: [t(title, { bold: true, size: opts?.size, font: FONT_HEADING })],
     spacing: { before: opts?.before ?? 80, after: 40 },
   })
 }
@@ -203,17 +191,16 @@ function extractLogoFromTemplate(templateFile: string): Buffer | null {
   return null
 }
 
-function buildHeaderTable(logoData: Buffer | null, profile: typeof COMPANY_PROFILES[keyof typeof COMPANY_PROFILES]): Table {
-  const logoCell = new TableCell({
-    borders: NOBORDER,
-    width: { size: 20, type: WidthType.PERCENTAGE },
-    children: logoData
-      ? [new Paragraph({
-          spacing: { after: 0 },
-          children: [new ImageRun({ data: logoData, transformation: { width: LOGO_W, height: LOGO_H }, type: "png" })],
-        })]
-      : [new Paragraph({ children: [], spacing: { after: 0 } })],
-  })
+function buildHeaderParagraphs(logoData: Buffer | null, profile: typeof COMPANY_PROFILES[keyof typeof COMPANY_PROFILES]): Paragraph[] {
+  const paras: Paragraph[] = []
+
+  if (logoData) {
+    paras.push(new Paragraph({
+      alignment: AlignmentType.LEFT,
+      spacing: { after: 40 },
+      children: [new ImageRun({ data: logoData, transformation: { width: LOGO_W, height: LOGO_H }, type: "png" })],
+    }))
+  }
 
   const lines = [
     { text: profile.name, bold: true, size: SZ_CO },
@@ -223,22 +210,15 @@ function buildHeaderTable(logoData: Buffer | null, profile: typeof COMPANY_PROFI
     { text: profile.website, size: SZ_SM },
   ]
 
-  const infoCell = new TableCell({
-    borders: NOBORDER,
-    width: { size: 80, type: WidthType.PERCENTAGE },
-    children: lines.map((l) =>
-      new Paragraph({
-        alignment: AlignmentType.RIGHT,
-        spacing: { after: 0 },
-        children: [t(l.text, { bold: l.bold, size: l.size })],
-      })
-    ),
-  })
+  for (const l of lines) {
+    paras.push(new Paragraph({
+      alignment: AlignmentType.RIGHT,
+      spacing: { after: 0 },
+      children: [t(l.text, { bold: l.bold, size: l.size })],
+    }))
+  }
 
-  return new Table({
-    rows: [new TableRow({ children: [logoCell, infoCell] })],
-    width: { size: 100, type: WidthType.PERCENTAGE },
-  })
+  return paras
 }
 
 // ============================
@@ -258,8 +238,8 @@ export async function generateDocx(input: GeneratorInput): Promise<Buffer> {
     } catch { /* logo not found */ }
   }
 
-  const p1: (Paragraph | Table)[] = []
-  const p2: (Paragraph | Table)[] = []
+  const p1: Paragraph[] = []
+  const p2: Paragraph[] = []
 
   // ==================== PAGE 1 ====================
 
@@ -517,7 +497,7 @@ export async function generateDocx(input: GeneratorInput): Promise<Buffer> {
     spacing: { before: 80, after: 0 },
     children: [
       t("План обследования ", { bold: true }),
-      t("(консультации специалистов, ЭКГ, УЗИ, ФГ, ОАМ, ОАК, глюкоза крови,", { bold: true }),
+      t("(консультации специалистов, ЭКГ, УЗИ, ФГ, ОАМ, клинический анализ крови,", { bold: true }),
     ],
   }))
   const examVal = String((d.examination_plan || {}).examination_plan_text || "")
@@ -597,19 +577,19 @@ export async function generateDocx(input: GeneratorInput): Promise<Buffer> {
   })
 
   // Margins: top 12mm, right 15mm, bottom 15mm, left 20mm (1mm ≈ 56.7 twips)
-  const margin = { top: 680, bottom: 850, left: 1134, right: 850 }
+  const margin = { top: 720, bottom: 720, left: 720, right: 720 }
 
   const doc = new Document({
     sections: [
       {
         properties: { page: { margin } },
         footers: { default: mkFooter() },
-        children: [buildHeaderTable(logoData, profile), ...p1],
+        children: [...buildHeaderParagraphs(logoData, profile), ...p1],
       },
       {
         properties: { page: { margin } },
         footers: { default: mkFooter() },
-        children: [buildHeaderTable(logoData, profile), ...p2],
+        children: [...buildHeaderParagraphs(logoData, profile), ...p2],
       },
     ],
   })
